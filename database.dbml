@@ -1,0 +1,46 @@
+// Tabel Utama
+Table users {
+  id bigint [pk, increment]
+  name varchar
+  email varchar
+  role varchar
+  created_at timestamp
+}
+
+Table surats {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  nomor_surat varchar
+  judul_surat varchar
+  tanggal_surat date
+  status varchar
+  kantor_id varchar
+  tahun varchar
+  metode varchar
+  kode_surat varchar
+  asal_surat varchar
+  created_at timestamp
+}
+
+Table units {
+  id bigint [pk, increment]
+  nama_unit varchar
+  created_at timestamp
+}
+
+Table pegawais {
+  id bigint [pk, increment]
+  unit_id bigint [ref: > units.id]
+  nama_pegawai varchar
+  jabatan varchar
+  created_at timestamp
+}
+
+Table disposisi_tujuans {
+  id bigint [pk, increment]
+  surat_id bigint [ref: > surats.id]
+  unit_kerja varchar
+  jabatan varchar
+  pegawai varchar
+  created_at timestamp
+}

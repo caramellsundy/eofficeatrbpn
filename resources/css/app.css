@@ -1,0 +1,4 @@
+/* Hapus baris @import bootstrap agar tidak ada konflik */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
