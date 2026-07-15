@@ -15,7 +15,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Menampilkan halaman login.
      */
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
         // Jika sudah login, arahkan sesuai role
         if (Auth::check()) {
@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
                     return redirect()->route('pegawai.dashboard');
 
                 case 'umum':
-                    return redirect()->route('dashboard.umum');
+                    return redirect()->route('umum.dashboard');
             }
         }
 

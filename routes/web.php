@@ -295,18 +295,11 @@ Route::middleware(['auth','role:admin'])
 
 });
 
-
-
-
-
-
-
 /*
 |--------------------------------------------------------------------------
 | PEGAWAI
 |--------------------------------------------------------------------------
 */
-
 
 Route::middleware(['auth','role:pegawai'])
 ->prefix('pegawai')
@@ -314,133 +307,60 @@ Route::middleware(['auth','role:pegawai'])
 ->group(function(){
 
 
-
     Route::get('/dashboard',
-        [PegawaiDashboardController::class,'index'])
-        ->name('dashboard');
+        [PegawaiDashboardController::class,'index']
+    )
+    ->name('dashboard');
 
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | SURAT MASUK
-    |--------------------------------------------------------------------------
-    */
-
-
-    Route::get('/surat-masuk',
-        [PegawaiSuratMasukController::class,'index'])
-        ->name('surat.masuk.index');
-
-
-    Route::get('/surat-masuk/{id}',
-        [PegawaiSuratMasukController::class,'show'])
-        ->name('surat.masuk.show');
+    Route::resource(
+        'surat-masuk',
+        PegawaiSuratMasukController::class
+    )
+    ->parameters([
+        'surat-masuk'=>'id'
+    ])
+    ->names('surat-masuk');
 
 
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | SURAT KELUAR
-    |--------------------------------------------------------------------------
-    */
-
-
-    Route::get('/surat-keluar',
-        [PegawaiSuratKeluarController::class,'index'])
-        ->name('surat.keluar.index');
+    Route::put(
+        '/surat-masuk/{id}/kirim',
+        [PegawaiSuratMasukController::class,'kirim']
+    )
+    ->name('surat-masuk.kirim');
 
 
 
-    Route::get('/surat-keluar/create',
-        [PegawaiSuratKeluarController::class,'create'])
-        ->name('surat.keluar.create');
+    Route::resource(
+        'surat-keluar',
+        PegawaiSuratKeluarController::class
+    );
 
-
-
-    Route::post('/surat-keluar',
-        [PegawaiSuratKeluarController::class,'store'])
-        ->name('surat.keluar.store');
-
-
-
-    Route::get('/surat-keluar/{id}',
-        [PegawaiSuratKeluarController::class,'show'])
-        ->name('surat.keluar.show');
-
-
-
-    Route::get('/surat-keluar/{id}/edit',
-        [PegawaiSuratKeluarController::class,'edit'])
-        ->name('surat.keluar.edit');
-
-
-
-    Route::put('/surat-keluar/{id}',
-        [PegawaiSuratKeluarController::class,'update'])
-        ->name('surat.keluar.update');
-
-
-
-    Route::delete('/surat-keluar/{id}',
-        [PegawaiSuratKeluarController::class,'destroy'])
-        ->name('surat.keluar.destroy');
-
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | DISPOSISI
-    |--------------------------------------------------------------------------
-    */
 
 
     Route::get('/disposisi',
-        [PegawaiDisposisiController::class,'index'])
-        ->name('disposisi.index');
-
-
-
-    Route::get('/disposisi/{id}',
-        [PegawaiDisposisiController::class,'show'])
-        ->name('disposisi.show');
-
-
-
-    Route::get('/disposisi/{id}/cetak',
-        [PegawaiDisposisiController::class,'cetak'])
-        ->name('disposisi.cetak');
+        [PegawaiDisposisiController::class,'index']
+    )
+    ->name('disposisi.index');
 
 
 });
-
-
-
-
-
-
-
 /*
 |--------------------------------------------------------------------------
 | UMUM
 |--------------------------------------------------------------------------
 */
 
-
 Route::middleware('auth')
 ->prefix('umum')
 ->name('umum.')
 ->group(function(){
 
-
-
     Route::get('/dashboard',
         [UmumDashboardController::class,'index'])
         ->name('dashboard');
-
-
 
     Route::resource(
         'surat',
@@ -448,52 +368,36 @@ Route::middleware('auth')
     );
 
 
-
     Route::get('/cari',
     [UmumSuratController::class,'cariBerkasForm'])
     ->name('cari.form');
-
-
 
     Route::post('/cari',
     [UmumSuratController::class,'cariBerkas'])
     ->name('cari.proses');
 
-
-
     Route::view('/layanan',
         'umum.layanan.index')
         ->name('layanan.index');
-
-
 
     Route::view('/profil',
         'umum.profil')
         ->name('profil');
 
-
-
     Route::view('/struktur-organisasi',
         'umum.struktur')
         ->name('struktur');
-
-
 
     Route::view('/visi-misi',
         'umum.visi-misi')
         ->name('visi');
 
-
-
     Route::view('/menteri',
         'umum.menteri')
         ->name('menteri');
 
-
-
     Route::view('/wakil-menteri',
         'umum.wakil-menteri')
         ->name('wakil');
-
 
 });

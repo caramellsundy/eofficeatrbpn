@@ -1,28 +1,36 @@
 @extends('layouts.pegawai')
 
-@section('title','Surat Saya')
+@section('title','Surat Masuk')
 
 @section('content')
 
 <div class="page-header fade-up">
 
     <div>
+
         <h2>
+
             <i class="bi bi-envelope-paper-fill text-primary me-2"></i>
-            Surat Saya
+
+            Surat Masuk
+
         </h2>
 
         <p class="text-muted mb-0">
-            Kelola surat yang telah Anda buat dan kirim.
+
+            Kelola seluruh surat masuk yang telah Anda input ke sistem.
+
         </p>
+
     </div>
 
+    <a
+        href="{{ route('pegawai.surat-masuk.create') }}"
+        class="btn btn-primary">
 
-    <a href="{{ route('pegawai.surat-masuk.create') }}"
-       class="btn btn-primary">
+        <i class="bi bi-plus-circle-fill me-2"></i>
 
-        <i class="bi bi-send-plus-fill me-2"></i>
-        Kirim Surat
+        Tambah Surat
 
     </a>
 
@@ -30,448 +38,568 @@
 
 
 
-{{-- ================= STATISTIK ================= --}}
+{{-- ========================================================= --}}
+{{-- STATISTIK --}}
+{{-- ========================================================= --}}
 
 <div class="dashboard-grid mb-4">
 
+    <div class="stat-card">
 
-<div class="stat-card">
+        <div>
 
-<div>
-<span>Total Surat</span>
-<h3>{{ $surat->total() }}</h3>
+            <span>Total Surat</span>
+
+            <h3>
+
+                {{ $suratMasuk->total() }}
+
+            </h3>
+
+        </div>
+
+        <div class="stat-icon primary">
+
+            <i class="bi bi-envelope-fill"></i>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="stat-card">
+
+        <div>
+
+            <span>Menunggu</span>
+
+            <h3>
+
+                {{ $suratMasuk->where('status','Menunggu')->count() }}
+
+            </h3>
+
+        </div>
+
+        <div class="stat-icon secondary">
+
+            <i class="bi bi-hourglass-split"></i>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="stat-card">
+
+        <div>
+
+            <span>Diproses</span>
+
+            <h3>
+
+                {{ $suratMasuk->where('status','Diproses')->count() }}
+
+            </h3>
+
+        </div>
+
+        <div class="stat-icon info">
+
+            <i class="bi bi-arrow-repeat"></i>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="stat-card">
+
+        <div>
+
+            <span>Selesai</span>
+
+            <h3>
+
+                {{ $suratMasuk->where('status','Selesai')->count() }}
+
+            </h3>
+
+        </div>
+
+        <div class="stat-icon success">
+
+            <i class="bi bi-check-circle-fill"></i>
+
+        </div>
+
+    </div>
+
 </div>
 
-<div class="stat-icon primary">
-<i class="bi bi-envelope-fill"></i>
-</div>
-
-</div>
 
 
-
-<div class="stat-card">
-
-<div>
-<span>Menunggu</span>
-<h3>
-{{ $surat->where('status','Menunggu')->count() }}
-</h3>
-</div>
-
-<div class="stat-icon warning">
-<i class="bi bi-hourglass-split"></i>
-</div>
-
-</div>
-
-
-
-<div class="stat-card">
-
-<div>
-<span>Diproses</span>
-<h3>
-{{ $surat->where('status','Diproses')->count() }}
-</h3>
-</div>
-
-<div class="stat-icon info">
-<i class="bi bi-arrow-repeat"></i>
-</div>
-
-</div>
-
-
-
-<div class="stat-card">
-
-<div>
-<span>Selesai</span>
-<h3>
-{{ $surat->where('status','Selesai')->count() }}
-</h3>
-</div>
-
-<div class="stat-icon success">
-<i class="bi bi-check-circle-fill"></i>
-</div>
-
-</div>
-
-
-</div>
-
-
-
-
-{{-- ================= TABLE ================= --}}
-
+{{-- ========================================================= --}}
+{{-- CARD TABEL --}}
+{{-- ========================================================= --}}
 
 <div class="table-card fade-up">
 
+    <div class="table-header">
 
-<div class="table-header">
+        <div>
 
-<h4>
-<i class="bi bi-list-ul text-primary me-2"></i>
-Daftar Surat Saya
-</h4>
+            <h4>
 
+                <i class="bi bi-list-ul me-2 text-primary"></i>
 
-<span class="badge bg-primary">
-{{ $surat->total() }} Surat
-</span>
+                Daftar Surat Masuk
 
+            </h4>
 
-</div>
+            <small class="text-muted">
 
+                Daftar seluruh surat masuk milik Anda.
 
+            </small>
 
+        </div>
 
-<div class="table-toolbar">
+        <span class="badge bg-primary">
 
+            {{ $suratMasuk->total() }} Surat
 
-<form action="{{ route('pegawai.surat.index') }}"
-      method="GET"
-      class="table-search">
+        </span>
 
-
-<i class="bi bi-search"></i>
-
-
-<input type="text"
-       name="keyword"
-       value="{{ request('keyword') }}"
-       placeholder="Cari nomor surat atau perihal...">
-
-
-</form>
-
-
-</div>
+    </div>
 
 
 
+    {{-- ========================================================= --}}
+    {{-- SEARCH & FILTER --}}
+    {{-- ========================================================= --}}
+
+    <div class="table-toolbar">
+
+        <form
+            action="{{ route('pegawai.surat-masuk.index') }}"
+            method="GET"
+            class="table-search">
+
+            <i class="bi bi-search"></i>
+
+            <input
+                type="text"
+                name="keyword"
+                value="{{ request('keyword') }}"
+                placeholder="Cari nomor surat, asal surat, atau perihal...">
+
+        </form>
 
 
-<div class="table-responsive">
+
+        <form
+            action="{{ route('pegawai.surat-masuk.index') }}"
+            method="GET"
+            class="d-flex gap-2">
+
+            @if(request('keyword'))
+
+                <input
+                    type="hidden"
+                    name="keyword"
+                    value="{{ request('keyword') }}">
+
+            @endif
+
+            <select
+                name="status"
+                class="form-select">
+
+                <option value="">
+
+                    Semua Status
+
+                </option>
+
+                <option
+                    value="Menunggu"
+                    {{ request('status')=='Menunggu' ? 'selected' : '' }}>
+
+                    Menunggu
+
+                </option>
+
+                <option
+                    value="Diproses"
+                    {{ request('status')=='Diproses' ? 'selected' : '' }}>
+
+                    Diproses
+
+                </option>
+
+                <option
+                    value="Selesai"
+                    {{ request('status')=='Selesai' ? 'selected' : '' }}>
+
+                    Selesai
+
+                </option>
+
+            </select>
+
+            <button
+                type="submit"
+                class="btn btn-primary">
+
+                <i class="bi bi-funnel-fill"></i>
+
+            </button>
+
+        </form>
+
+    </div>
 
 
-<table class="table align-middle">
 
+    <div class="table-responsive">
 
-<thead>
+        <table class="table align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th width="60">
+
+                        No
+
+                    </th>
+
+                    <th>
+
+                        Nomor Surat
+
+                    </th>
+
+                    <th>
+
+                        Asal Surat
+
+                    </th>
+
+                    <th>
+
+                        Perihal
+
+                    </th>
+
+                    <th width="130">
+
+                        Tanggal
+
+                    </th>
+
+                    <th width="130">
+
+                        Status
+
+                    </th>
+
+                    <th width="160">
+
+                        Aksi
+
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            @forelse($suratMasuk as $surat)
 
 <tr>
 
-<th width="60">
-No
-</th>
+    <td>
+
+        {{ $loop->iteration + ($suratMasuk->firstItem() - 1) }}
+
+    </td>
+
+    <td>
+
+        <strong>
+
+            {{ $surat->nomor_surat }}
+
+        </strong>
+
+    </td>
+
+    <td>
+
+        {{ $surat->asal_surat }}
+
+    </td>
+
+    <td>
+
+        {{ $surat->perihal }}
+
+    </td>
+
+    <td>
+
+        {{ \Carbon\Carbon::parse($surat->tanggal_surat)->format('d M Y') }}
+
+    </td>
+
+    <td>
+
+        @if($surat->status == 'Menunggu')
+
+            <span class="badge bg-warning">
+
+                Menunggu
+
+            </span>
+
+        @elseif($surat->status == 'Diproses')
+
+            <span class="badge bg-primary">
+
+                Diproses
+
+            </span>
+
+        @elseif($surat->status == 'Selesai')
+
+            <span class="badge bg-success">
+
+                Selesai
+
+            </span>
+
+        @else
+
+            <span class="badge bg-secondary">
+
+                {{ $surat->status }}
+
+            </span>
+
+        @endif
+
+    </td>
+
+    <td>
+
+        <div class="d-flex gap-1">
+
+            {{-- DETAIL --}}
+            <a
+                href="{{ route('pegawai.surat-masuk.show',$surat->id) }}"
+                class="btn btn-sm btn-outline-primary"
+                title="Detail">
+
+                <i class="bi bi-eye"></i>
+
+            </a>
 
 
-<th>
-Surat
-</th>
+            {{-- EDIT hanya jika Menunggu --}}
+            @if($surat->status == 'Menunggu')
+
+                <a
+                    href="{{ route('pegawai.surat-masuk.edit',$surat->id) }}"
+                    class="btn btn-sm btn-outline-warning"
+                    title="Edit">
+
+                    <i class="bi bi-pencil-square"></i>
+
+                </a>
+
+            @endif
 
 
-<th>
-Tanggal
-</th>
+            {{-- KIRIM --}}
+            @if($surat->status == 'Menunggu')
+
+                <form
+                    action="{{ route('pegawai.surat-masuk.kirim',$surat->id) }}"
+                    method="POST"
+                    class="d-inline">
+
+                    @csrf
+
+                    @method('PUT')
+
+                    <button
+                        type="submit"
+                        class="btn btn-sm btn-outline-success"
+                        onclick="return confirm('Kirim surat ini?')"
+                        title="Kirim">
+
+                        <i class="bi bi-send-fill"></i>
+
+                    </button>
+
+                </form>
+
+            @endif
 
 
-<th>
-Status
-</th>
+            {{-- HAPUS --}}
+            @if($surat->status == 'Menunggu')
 
+                <form
+                    action="{{ route('pegawai.surat-masuk.destroy',$surat->id) }}"
+                    method="POST"
+                    class="d-inline">
 
-<th width="160">
-Aksi
-</th>
+                    @csrf
 
+                    @method('DELETE')
+
+                    <button
+                        type="submit"
+                        class="btn btn-sm btn-outline-danger"
+                        onclick="return confirm('Yakin ingin menghapus surat ini?')"
+                        title="Hapus">
+
+                        <i class="bi bi-trash"></i>
+
+                    </button>
+
+                </form>
+
+            @endif
+
+        </div>
+
+    </td>
 
 </tr>
-
-
-</thead>
-
-
-
-<tbody>
-
-
-
-@forelse($surat as $item)
-
-
-<tr>
-
-
-<td>
-{{ $surat->firstItem()+$loop->index }}
-</td>
-
-
-
-<td>
-
-
-<div class="table-avatar">
-
-
-<div class="avatar">
-
-<i class="bi bi-envelope-fill"></i>
-
-</div>
-
-
-
-<div>
-
-
-<strong>
-{{ $item->nomor_surat }}
-</strong>
-
-
-<br>
-
-
-<small>
-{{ $item->perihal }}
-</small>
-
-
-</div>
-
-
-</div>
-
-
-</td>
-
-
-
-
-
-<td>
-
-@if($item->tanggal_surat)
-
-{{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d M Y') }}
-
-@else
-
--
-
-@endif
-
-
-</td>
-
-
-
-
-<td>
-
-
-@switch($item->status)
-
-
-@case('Menunggu')
-
-<span class="badge bg-warning text-dark">
-<i class="bi bi-hourglass me-1"></i>
-Menunggu
-</span>
-
-@break
-
-
-
-@case('Diproses')
-
-
-<span class="badge bg-info">
-<i class="bi bi-arrow-repeat me-1"></i>
-Diproses
-</span>
-
-
-@break
-
-
-
-@case('Selesai')
-
-
-<span class="badge bg-success">
-
-<i class="bi bi-check-circle me-1"></i>
-Selesai
-
-</span>
-
-
-@break
-
-
-
-@default
-
-<span class="badge bg-secondary">
-
-{{ $item->status }}
-
-</span>
-
-
-@endswitch
-
-
-</td>
-
-
-
-
-<td>
-
-
-<div class="table-action">
-
-
-<a href="{{ route('pegawai.surat.show',$item->id) }}"
-class="btn-view">
-
-<i class="bi bi-eye"></i>
-
-</a>
-
-
-
-
-</div>
-
-
-</td>
-
-
-
-</tr>
-
 
 @empty
 
-
 <tr>
 
-<td colspan="5">
+    <td
+        colspan="7"
+        class="text-center py-5">
 
+        <i class="bi bi-inbox display-5 text-secondary"></i>
 
-<div class="table-empty">
+        <br><br>
 
+        <strong>
 
-<i class="bi bi-inbox"></i>
+            Belum ada surat masuk
 
+        </strong>
 
-<h5>
-Belum Ada Surat
-</h5>
+        <br>
 
+        <small class="text-muted">
 
-<p>
-Anda belum membuat surat.
-</p>
+            Silakan tambahkan surat masuk terlebih dahulu.
 
+        </small>
 
-</div>
-
-
-</td>
-
+    </td>
 
 </tr>
 
-
 @endforelse
-
-
 
 </tbody>
 
-
 </table>
-
 
 </div>
 
-
-
-
+{{-- ========================================================= --}}
+{{-- FOOTER TABLE --}}
+{{-- ========================================================= --}}
 
 <div class="table-footer">
 
+    <div class="text-muted">
 
-<div>
+        Menampilkan
 
-Menampilkan
+        <strong>
 
-<strong>
-{{ $surat->firstItem() ?? 0 }}
-</strong>
+            {{ $suratMasuk->firstItem() ?? 0 }}
 
--
+        </strong>
 
-<strong>
-{{ $surat->lastItem() ?? 0 }}
-</strong>
+        -
 
-dari
+        <strong>
 
-<strong>
-{{ $surat->total() }}
-</strong>
+            {{ $suratMasuk->lastItem() ?? 0 }}
 
-surat
+        </strong>
+
+        dari
+
+        <strong>
+
+            {{ $suratMasuk->total() }}
+
+        </strong>
+
+        surat
+
+    </div>
+
+
+    <div>
+
+        {{ $suratMasuk->links() }}
+
+    </div>
 
 
 </div>
 
 
-<div>
-
-{{ $surat->withQueryString()->links() }}
-
 </div>
-
-
-</div>
-
-
-
-</div>
-
 
 @endsection
 
 
 
-
+{{-- ========================================================= --}}
+{{-- STYLE --}}
+{{-- ========================================================= --}}
 
 @push('styles')
-
 
 <style>
 
 
 .page-header{
 
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-top:25px;
-margin-bottom:30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:20px;
+    margin-bottom:30px;
+
+}
+
+
+.page-header h2{
+
+    font-weight:700;
 
 }
 
@@ -479,9 +607,9 @@ margin-bottom:30px;
 
 .dashboard-grid{
 
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:20px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
 
 }
 
@@ -489,13 +617,13 @@ gap:20px;
 
 .stat-card{
 
-background:white;
-border-radius:20px;
-padding:25px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-box-shadow:0 10px 25px rgba(0,0,0,.05);
+    background:white;
+    border-radius:18px;
+    padding:25px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    box-shadow:0 10px 25px rgba(0,0,0,.05);
 
 }
 
@@ -503,16 +631,18 @@ box-shadow:0 10px 25px rgba(0,0,0,.05);
 
 .stat-card span{
 
-color:#64748b;
+    color:#64748b;
+    font-size:14px;
 
 }
 
 
+
 .stat-card h3{
 
-font-size:32px;
-font-weight:700;
-margin:5px 0;
+    margin-top:8px;
+    font-size:30px;
+    font-weight:700;
 
 }
 
@@ -520,140 +650,197 @@ margin:5px 0;
 
 .stat-icon{
 
-width:65px;
-height:65px;
-border-radius:18px;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:25px;
+    width:60px;
+    height:60px;
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
 
 }
 
 
 
-.primary{
+.stat-icon.primary{
 
-background:#dbeafe;
-color:#2563eb;
-
-}
-
-
-.warning{
-
-background:#fef3c7;
-color:#d97706;
-
-}
-
-
-.info{
-
-background:#cffafe;
-color:#0891b2;
-
-}
-
-
-.success{
-
-background:#dcfce7;
-color:#16a34a;
+    background:#dbeafe;
+    color:#2563eb;
 
 }
 
 
 
-.table-avatar{
+.stat-icon.secondary{
 
-display:flex;
-align-items:center;
-gap:15px;
-
-}
-
-
-
-.avatar{
-
-width:45px;
-height:45px;
-border-radius:12px;
-background:#2563eb;
-color:white;
-display:flex;
-align-items:center;
-justify-content:center;
+    background:#fef3c7;
+    color:#d97706;
 
 }
 
 
 
-.table-action{
+.stat-icon.info{
 
-display:flex;
-gap:8px;
-
-}
-
-
-
-.table-action a,
-.table-action button{
-
-width:36px;
-height:36px;
-border-radius:10px;
-border:0;
-display:flex;
-align-items:center;
-justify-content:center;
+    background:#cffafe;
+    color:#0891b2;
 
 }
 
 
 
-.btn-view{
+.stat-icon.success{
 
-background:#e0f2fe;
-color:#0284c7;
-
-}
-
-
-
-.btn-edit{
-
-background:#fef3c7;
-color:#d97706;
+    background:#dcfce7;
+    color:#16a34a;
 
 }
 
 
 
-.btn-delete{
+.table-card{
 
-background:#fee2e2;
-color:#dc2626;
-
-}
-
-
-
-.table-empty{
-
-padding:60px;
-text-align:center;
+    background:white;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,.05);
 
 }
 
 
 
-.table-empty i{
+.table-header{
 
-font-size:60px;
-color:#cbd5e1;
+    padding:25px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid #edf2f7;
+
+}
+
+
+
+.table-header h4{
+
+    font-weight:700;
+    margin-bottom:5px;
+
+}
+
+
+
+.table-toolbar{
+
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    align-items:center;
+    flex-wrap:wrap;
+
+}
+
+
+
+.table-search{
+
+    position:relative;
+    flex:1;
+
+}
+
+
+
+.table-search i{
+
+    position:absolute;
+    left:15px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#94a3b8;
+
+}
+
+
+
+.table-search input{
+
+    width:100%;
+    padding:12px 15px 12px 45px;
+    border-radius:12px;
+    border:1px solid #dbe2ea;
+
+}
+
+
+
+.table-search input:focus{
+
+    outline:none;
+    border-color:#2563eb;
+
+}
+
+
+
+.table-responsive{
+
+    padding:0 20px;
+
+}
+
+
+
+.table{
+
+    margin-bottom:0;
+
+}
+
+
+
+.table thead th{
+
+    background:#f8fafc;
+    color:#475569;
+    font-size:14px;
+    font-weight:600;
+
+}
+
+
+
+.table tbody td{
+
+    padding:15px;
+    vertical-align:middle;
+
+}
+
+
+
+.table tbody tr:hover{
+
+    background:#f8fafc;
+
+}
+
+
+
+.badge{
+
+    padding:8px 14px;
+    border-radius:20px;
+    font-size:12px;
+
+}
+
+
+
+.btn-sm{
+
+    border-radius:10px;
 
 }
 
@@ -661,48 +848,88 @@ color:#cbd5e1;
 
 .table-footer{
 
-display:flex;
-justify-content:space-between;
-padding:20px;
-background:#fafafa;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-top:1px solid #edf2f7;
+    background:#fafafa;
 
 }
 
 
 
-@media(max-width:900px){
+.pagination{
+
+    margin-bottom:0;
+
+}
+
+
+
+@media(max-width:1200px){
+
 
 .dashboard-grid{
 
-grid-template-columns:1fr 1fr;
+    grid-template-columns:repeat(2,1fr);
 
 }
 
-}
-
-
-@media(max-width:600px){
-
-.dashboard-grid{
-
-grid-template-columns:1fr;
 
 }
+
+
+
+@media(max-width:768px){
 
 
 .page-header{
 
-flex-direction:column;
-align-items:flex-start;
-gap:15px;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:15px;
+
+}
+
+
+
+.table-toolbar{
+
+    flex-direction:column;
+    align-items:stretch;
+
+}
+
+
+
+.table-footer{
+
+    flex-direction:column;
+    gap:15px;
+
+}
+
+
+
+}
+
+
+
+@media(max-width:576px){
+
+
+.dashboard-grid{
+
+    grid-template-columns:1fr;
 
 }
 
 
 }
+
 
 
 </style>
-
 
 @endpush

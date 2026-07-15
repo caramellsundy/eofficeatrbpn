@@ -549,7 +549,7 @@
 
                 </h5>
 
-                <a href="{{ route('pegawai.surat.masuk.index') }}"
+                <a href="{{ route('pegawai.surat-masuk.index') }}"
                    class="btn btn-sm btn-outline-primary rounded-pill">
 
                     Lihat Semua

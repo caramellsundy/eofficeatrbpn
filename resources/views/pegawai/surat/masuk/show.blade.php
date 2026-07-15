@@ -1,239 +1,301 @@
-<x-app-layout>
+@extends('layouts.pegawai')
 
-    {{-- Bootstrap --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+@section('title','Detail Surat Masuk')
 
-    <style>
-        body{
-            background:#f4f6f9;
-        }
+@section('content')
 
-        .page-title{
-            font-size:24px;
-            font-weight:700;
-            color:#0d6efd;
-        }
+<div class="page-header fade-up">
 
-        .card-custom{
-            border:none;
-            border-radius:12px;
-            overflow:hidden;
-            box-shadow:0 5px 15px rgba(0,0,0,.08);
-        }
+    <div>
 
-        .card-header-custom{
-            background:#0d6efd;
-            color:#fff;
-            padding:18px 25px;
-        }
+        <h2>
 
-        .card-header-custom h5{
-            margin:0;
-            font-weight:700;
-        }
+            <i class="bi bi-envelope-open-fill text-primary me-2"></i>
 
-        .table td{
-            vertical-align:top;
-            padding:12px;
-        }
-
-        .label{
-            width:220px;
-            font-weight:600;
-            color:#495057;
-            background:#f8f9fa;
-        }
-
-        .btn{
-            border-radius:8px;
-            padding:10px 20px;
-            font-weight:600;
-        }
-
-        iframe{
-            border-radius:10px;
-            border:1px solid #dee2e6;
-        }
-    </style>
-
-<div class="container-fluid py-4">
-
-    <div class="mb-4">
-
-        <h2 class="page-title">
-
-            <i class="bi bi-eye-fill"></i>
-
-            Detail Surat {{ ucfirst($surat->jenis_surat) }}
+            Detail Surat Masuk
 
         </h2>
 
-    </div>
+        <p class="text-muted mb-0">
 
-    <div class="card card-custom">
+            Informasi lengkap surat yang telah diregistrasi.
 
-        <div class="card-header-custom">
-
-            <h5>
-
-                <i class="bi bi-file-earmark-text-fill"></i>
-
-                INFORMASI SURAT
-
-            </h5>
-
-        </div>
-
-        <div class="card-body">
-
-            <table class="table table-bordered">
-
-                <tr>
-                    <td class="label">Nomor Surat</td>
-                    <td>{{ $surat->nomor_surat }}</td>
-                </tr>
-
-                <tr>
-                    <td class="label">Tanggal Surat</td>
-                    <td>
-                        {{ $surat->tanggal_surat
-                            ? \Carbon\Carbon::parse($surat->tanggal_surat)->format('d-m-Y')
-                            : '-' }}
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="label">Jenis Surat</td>
-                    <td>
-                        <span class="badge bg-primary">
-                            {{ strtoupper($surat->jenis_surat) }}
-                        </span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="label">Asal Surat</td>
-                    <td>{{ $surat->asal_surat ?? '-' }}</td>
-                </tr>
-
-                <tr>
-                    <td class="label">Tujuan Surat</td>
-                    <td>{{ $surat->tujuan_surat ?? '-' }}</td>
-                </tr>
-
-                <tr>
-                    <td class="label">Judul Surat</td>
-                    <td>{{ $surat->judul_surat ?? '-' }}</td>
-                </tr>
-
-                <tr>
-                    <td class="label">Kode Surat</td>
-                    <td>{{ $surat->kode_surat ?? '-' }}</td>
-                </tr>
-
-                <tr>
-                    <td class="label">Nomor Agenda</td>
-                    <td>{{ $surat->nomor_agenda ?? '-' }}</td>
-                </tr>
-
-                <tr>
-                    <td class="label">Metode Pengiriman</td>
-                    <td>{{ $surat->metode ?? '-' }}</td>
-                </tr>
-
-                <tr>
-                    <td class="label">Status</td>
-                    <td>
-
-                        @if($surat->status=='menunggu')
-                            <span class="badge bg-warning text-dark">
-                                Menunggu
-                            </span>
-
-                        @elseif($surat->status=='diproses')
-
-                            <span class="badge bg-info">
-                                Diproses
-                            </span>
-
-                        @elseif($surat->status=='selesai')
-
-                            <span class="badge bg-success">
-                                Selesai
-                            </span>
-
-                        @else
-
-                            <span class="badge bg-secondary">
-
-                                {{ ucfirst($surat->status) }}
-
-                            </span>
-
-                        @endif
-
-                    </td>
-
-                </tr>
-
-                <tr>
-
-                    <td class="label">
-
-                        Deskripsi
-
-                    </td>
-
-                    <td>
-
-                        {!! nl2br(e($surat->deskripsi)) !!}
-
-                    </td>
-
-                </tr>
-
-            </table>
-
-        </div>
+        </p>
 
     </div>
 
-    @if($surat->file_path)
+    <a href="{{ route('pegawai.surat-masuk.index') }}"
+       class="btn btn-light border">
 
-    <div class="card card-custom mt-4">
+        <i class="bi bi-arrow-left-circle me-2"></i>
 
-        <div class="card-header-custom">
+        Kembali
 
-            <h5>
+    </a>
 
-                <i class="bi bi-file-earmark-pdf-fill"></i>
+</div>
 
-                DOKUMEN SURAT
 
-            </h5>
 
-        </div>
+<div class="card shadow-sm border-0 mb-4">
 
-        <div class="card-body">
+<div class="card-body">
 
-            <iframe
-                src="{{ asset('storage/'.$surat->file_path) }}"
-                width="100%"
-                height="700">
-            </iframe>
+<div class="row align-items-center">
 
-            <div class="mt-3">
+<div class="col-md-8">
 
-                <a href="{{ asset('storage/'.$surat->file_path) }}"
-                   target="_blank"
-                   class="btn btn-success">
+<h4 class="fw-bold mb-2">
 
-                    <i class="bi bi-download"></i>
+{{ $surat->judul_surat }}
 
-                    Download Dokumen
+</h4>
 
-                </a>
+<p class="text-muted mb-1">
+
+Nomor Surat
+
+<strong>
+
+{{ $surat->nomor_surat }}
+
+</strong>
+
+</p>
+
+<p class="text-muted">
+
+Tanggal Surat :
+
+{{ optional($surat->tanggal_surat)->format('d F Y') }}
+
+</p>
+
+</div>
+
+<div class="col-md-4 text-md-end">
+
+@if($surat->status=='Draft')
+
+<span class="badge bg-secondary px-3 py-2">
+
+Draft
+
+</span>
+
+@elseif($surat->status=='Menunggu')
+
+<span class="badge bg-warning text-dark px-3 py-2">
+
+Menunggu
+
+</span>
+
+@elseif($surat->status=='Diproses')
+
+<span class="badge bg-info px-3 py-2">
+
+Diproses
+
+</span>
+
+@elseif($surat->status=='Selesai')
+
+<span class="badge bg-success px-3 py-2">
+
+Selesai
+
+</span>
+
+@else
+
+<span class="badge bg-primary px-3 py-2">
+
+{{ $surat->status }}
+
+</span>
+
+@endif
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<div class="card shadow-sm border-0 mb-4">
+
+<div class="card-header bg-primary text-white">
+
+<h5 class="mb-0">
+
+<i class="bi bi-journal-text me-2"></i>
+
+Informasi Registrasi
+
+</h5>
+
+</div>
+
+<div class="card-body">
+
+<div class="row">
+
+<div class="col-md-6 mb-4">
+
+<label class="text-muted">
+
+Nomor Surat
+
+</label>
+
+<h6>
+
+{{ $surat->nomor_surat }}
+
+</h6>
+
+</div>
+
+<div class="col-md-6 mb-4">
+
+<label class="text-muted">
+
+Tanggal Surat
+
+</label>
+
+<h6>
+
+{{ optional($surat->tanggal_surat)->format('d F Y') }}
+
+</h6>
+
+</div>
+
+<div class="col-md-6 mb-4">
+
+<label class="text-muted">
+
+Nomor Agenda
+
+</label>
+
+<h6>
+
+{{ $surat->nomor_agenda ?: '-' }}
+
+</h6>
+
+</div>
+
+<div class="col-md-6 mb-4">
+
+<label class="text-muted">
+
+Kode Surat
+
+</label>
+
+<h6>
+
+{{ $surat->kode_surat ?: '-' }}
+
+</h6>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{{-- ================= INFORMASI PENGIRIM ================= --}}
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-header bg-success text-white">
+
+        <h5 class="mb-0">
+
+            <i class="bi bi-building me-2"></i>
+
+            Informasi Pengirim
+
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-md-6 mb-4">
+
+                <label class="text-muted">
+
+                    Asal Surat
+
+                </label>
+
+                <h6>
+
+                    {{ $surat->asal_surat ?: '-' }}
+
+                </h6>
+
+            </div>
+
+            <div class="col-md-6 mb-4">
+
+                <label class="text-muted">
+
+                    Tujuan Surat
+
+                </label>
+
+                <h6>
+
+                    {{ $surat->tujuan_surat ?: '-' }}
+
+                </h6>
+
+            </div>
+
+            <div class="col-md-6 mb-4">
+
+                <label class="text-muted">
+
+                    Penandatangan
+
+                </label>
+
+                <h6>
+
+                    {{ $surat->penandatangan ?: '-' }}
+
+                </h6>
+
+            </div>
+
+            <div class="col-md-6 mb-4">
+
+                <label class="text-muted">
+
+                    Lampiran
+
+                </label>
+
+                <h6>
+
+                    {{ $surat->lampiran ?: '-' }}
+
+                </h6>
 
             </div>
 
@@ -241,23 +303,662 @@
 
     </div>
 
-    @endif
+</div>
 
-    <div class="mt-4 d-flex justify-content-end gap-2">
 
-        <a href="{{ route('pegawai.surat.index') }}"
-           class="btn btn-secondary">
 
-            <i class="bi bi-arrow-left-circle"></i>
+{{-- ================= ISI SURAT ================= --}}
 
-            Kembali
+<div class="card shadow-sm border-0 mb-4">
 
-        </a>
+    <div class="card-header bg-info text-white">
 
-        
+        <h5 class="mb-0">
+
+            <i class="bi bi-file-earmark-text me-2"></i>
+
+            Isi Surat
+
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="mb-4">
+
+            <label class="text-muted">
+
+                Judul Surat
+
+            </label>
+
+            <h5 class="fw-bold">
+
+                {{ $surat->judul_surat ?: '-' }}
+
+            </h5>
+
+        </div>
+
+
+
+        <div class="mb-4">
+
+            <label class="text-muted">
+
+                Perihal
+
+            </label>
+
+            <p class="mb-0">
+
+                {{ $surat->perihal ?: '-' }}
+
+            </p>
+
+        </div>
+
+
+
+        <div>
+
+            <label class="text-muted">
+
+                Catatan Pegawai
+
+            </label>
+
+            <div class="border rounded-3 bg-light p-3">
+
+                {!! nl2br(e($surat->deskripsi ?: '-')) !!}
+
+            </div>
+
+        </div>
 
     </div>
 
 </div>
 
-</x-app-layout>
+{{-- ================= INFORMASI PENERIMAAN ================= --}}
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-header bg-warning">
+
+        <h5 class="mb-0 text-dark">
+
+            <i class="bi bi-inbox-fill me-2"></i>
+
+            Informasi Penerimaan
+
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-md-6 mb-4">
+
+                <label class="text-muted">
+
+                    Metode Penerimaan
+
+                </label>
+
+                <h6>
+
+                    {{ $surat->metode ?: '-' }}
+
+                </h6>
+
+            </div>
+
+            <div class="col-md-6 mb-4">
+
+                <label class="text-muted">
+
+                    Prioritas
+
+                </label>
+
+                @if($surat->is_priority)
+
+                    <span class="badge bg-danger">
+
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+
+                        Prioritas Tinggi
+
+                    </span>
+
+                @else
+
+                    <span class="badge bg-success">
+
+                        Normal
+
+                    </span>
+
+                @endif
+
+            </div>
+
+            <div class="col-md-6 mb-4">
+
+                <label class="text-muted">
+
+                    Tanggal Input
+
+                </label>
+
+                <h6>
+
+                    {{ $surat->created_at->format('d F Y H:i') }}
+
+                </h6>
+
+            </div>
+
+            <div class="col-md-6 mb-4">
+
+                <label class="text-muted">
+
+                    Terakhir Diubah
+
+                </label>
+
+                <h6>
+
+                    {{ $surat->updated_at->format('d F Y H:i') }}
+
+                </h6>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+{{-- ================= LAMPIRAN ================= --}}
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-header bg-secondary text-white">
+
+        <h5 class="mb-0">
+
+            <i class="bi bi-paperclip me-2"></i>
+
+            Lampiran Surat
+
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        @if($surat->file_path)
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+
+                <div>
+
+                    <h6 class="mb-1">
+
+                        File Surat
+
+                    </h6>
+
+                    <small class="text-muted">
+
+                        {{ basename($surat->file_path) }}
+
+                    </small>
+
+                </div>
+
+                <div class="d-flex gap-2 mt-3 mt-md-0">
+
+                    <a href="{{ asset('storage/'.$surat->file_path) }}"
+                       target="_blank"
+                       class="btn btn-primary">
+
+                        <i class="bi bi-eye-fill me-2"></i>
+
+                        Lihat
+
+                    </a>
+
+                    <a href="{{ asset('storage/'.$surat->file_path) }}"
+                       download
+                       class="btn btn-success">
+
+                        <i class="bi bi-download me-2"></i>
+
+                        Download
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        @else
+
+            <div class="text-center py-4">
+
+                <i class="bi bi-file-earmark-x display-4 text-muted"></i>
+
+                <p class="text-muted mt-3 mb-0">
+
+                    Tidak ada lampiran surat.
+
+                </p>
+
+            </div>
+
+        @endif
+
+    </div>
+
+</div>
+
+
+
+{{-- ================= RIWAYAT SURAT ================= --}}
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-header bg-dark text-white">
+
+        <h5 class="mb-0">
+
+            <i class="bi bi-clock-history me-2"></i>
+
+            Riwayat Surat
+
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="timeline">
+
+            <div class="timeline-item">
+
+                <div class="timeline-icon bg-primary">
+
+                    <i class="bi bi-plus-circle-fill"></i>
+
+                </div>
+
+                <div class="timeline-content">
+
+                    <h6>
+
+                        Surat Diregistrasi
+
+                    </h6>
+
+                    <small class="text-muted">
+
+                        {{ $surat->created_at->format('d F Y H:i') }}
+
+                    </small>
+
+                </div>
+
+            </div>
+
+
+
+            @if($surat->updated_at != $surat->created_at)
+
+            <div class="timeline-item">
+
+                <div class="timeline-icon bg-warning">
+
+                    <i class="bi bi-pencil-fill"></i>
+
+                </div>
+
+                <div class="timeline-content">
+
+                    <h6>
+
+                        Surat Diperbarui
+
+                    </h6>
+
+                    <small class="text-muted">
+
+                        {{ $surat->updated_at->format('d F Y H:i') }}
+
+                    </small>
+
+                </div>
+
+            </div>
+
+            @endif
+
+
+
+            <div class="timeline-item">
+
+                <div class="timeline-icon bg-success">
+
+                    <i class="bi bi-check-circle-fill"></i>
+
+                </div>
+
+                <div class="timeline-content">
+
+                    <h6>
+
+                        Status Saat Ini
+
+                    </h6>
+
+                    <span class="badge bg-primary">
+
+                        {{ $surat->status }}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{{-- ================= AKSI ================= --}}
+
+<div class="card shadow-sm border-0">
+
+    <div class="card-body">
+
+        <div class="d-flex justify-content-between flex-wrap gap-2">
+
+            <a href="{{ route('pegawai.surat-masuk.index') }}"
+               class="btn btn-light border">
+
+                <i class="bi bi-arrow-left-circle me-2"></i>
+
+                Kembali
+
+            </a>
+
+            <div class="d-flex gap-2">
+
+                @if($surat->status == 'Draft')
+
+                    <a href="{{ route('pegawai.surat-masuk.edit',$surat->id) }}"
+                       class="btn btn-warning">
+
+                        <i class="bi bi-pencil-square me-2"></i>
+
+                        Edit
+
+                    </a>
+
+                    <form action="{{ route('pegawai.surat-masuk.kirim',$surat->id) }}"
+                          method="POST">
+
+                        @csrf
+                        @method('PUT')
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                            <i class="bi bi-send-fill me-2"></i>
+
+                            Kirim ke Admin
+
+                        </button>
+
+                    </form>
+
+                @endif
+
+                @if($surat->file_path)
+
+                    <a href="{{ asset('storage/'.$surat->file_path) }}"
+                       download
+                       class="btn btn-success">
+
+                        <i class="bi bi-download me-2"></i>
+
+                        Download
+
+                    </a>
+
+                @endif
+
+                <button
+                    onclick="window.print()"
+                    class="btn btn-dark">
+
+                    <i class="bi bi-printer-fill me-2"></i>
+
+                    Cetak
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@endsection
+
+
+@push('styles')
+
+<style>
+
+.page-header{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+
+}
+
+.card{
+
+border-radius:18px;
+overflow:hidden;
+box-shadow:0 8px 25px rgba(15,76,129,.08);
+
+}
+
+.card-header{
+
+padding:18px 25px;
+font-weight:700;
+
+}
+
+.card-body{
+
+padding:30px;
+
+}
+
+.timeline{
+
+position:relative;
+padding-left:25px;
+
+}
+
+.timeline::before{
+
+content:'';
+position:absolute;
+left:12px;
+top:0;
+bottom:0;
+width:2px;
+background:#dbe4ef;
+
+}
+
+.timeline-item{
+
+position:relative;
+padding-left:35px;
+margin-bottom:25px;
+
+}
+
+.timeline-icon{
+
+position:absolute;
+left:-2px;
+top:0;
+width:28px;
+height:28px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#fff;
+font-size:13px;
+
+}
+
+.timeline-content h6{
+
+margin-bottom:5px;
+font-weight:700;
+
+}
+
+label.text-muted{
+
+font-size:13px;
+font-weight:600;
+display:block;
+margin-bottom:5px;
+
+}
+
+h6{
+
+font-weight:600;
+color:#1f2937;
+
+}
+
+.badge{
+
+font-size:13px;
+padding:8px 14px;
+border-radius:20px;
+
+}
+
+.btn{
+
+border-radius:12px;
+padding:10px 18px;
+
+}
+
+@media(max-width:768px){
+
+.page-header{
+
+flex-direction:column;
+align-items:flex-start;
+gap:15px;
+
+}
+
+.card-body{
+
+padding:20px;
+
+}
+
+.d-flex.justify-content-between{
+
+flex-direction:column;
+
+}
+
+.d-flex.gap-2{
+
+width:100%;
+flex-direction:column;
+
+}
+
+.d-flex.gap-2 .btn{
+
+width:100%;
+
+}
+
+.d-flex.gap-2 form{
+
+width:100%;
+
+}
+
+.d-flex.gap-2 form button{
+
+width:100%;
+
+}
+
+}
+
+@media print{
+
+.page-header .btn,
+button,
+form{
+
+display:none!important;
+
+}
+
+body{
+
+background:#fff;
+
+}
+
+.card{
+
+box-shadow:none!important;
+border:1px solid #ddd;
+
+}
+
+}
+
+</style>
+
+@endpush

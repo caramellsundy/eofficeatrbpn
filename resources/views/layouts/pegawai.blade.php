@@ -170,52 +170,52 @@
 
             
 
-            {{-- ===================================================== --}}
-            {{-- PERSURATAN --}}
-            {{-- ===================================================== --}}
+           {{-- ======================================================
+     PERSURATAN
+====================================================== --}}
 
-            <span class="menu-title">
+<span class="menu-title">
     PERSURATAN
 </span>
 
-<a href="{{ route('pegawai.surat.masuk.index') }}"
-class="{{ request()->routeIs('pegawai.surat.masuk.*')?'active':'' }}">
 
+{{-- SURAT MASUK --}}
+<a href="{{ route('pegawai.surat-masuk.index') }}"
+   class="{{ request()->routeIs('pegawai.surat-masuk.*') ? 'active' : '' }}">
 
-<i class="bi bi-envelope-arrow-down-fill"></i>
+    <i class="bi bi-envelope-arrow-down-fill"></i>
 
-
-<span>
-Surat Masuk
-</span>
-
-
-</a>
-<a href="{{ route('pegawai.surat.keluar.index') }}"
-class="{{ request()->routeIs('pegawai.surat.keluar.*')?'active':'' }}">
-
-
-<i class="bi bi-envelope-arrow-up-fill"></i>
-
-
-<span>
-Surat Keluar
-</span>
-
+    <span>
+        Surat Masuk
+    </span>
 
 </a>
 
+
+
+{{-- SURAT KELUAR --}}
+<a href="{{ route('pegawai.surat-keluar.index') }}"
+   class="{{ request()->routeIs('pegawai.surat-keluar.*') ? 'active' : '' }}">
+
+    <i class="bi bi-envelope-paper-fill"></i>
+
+    <span>
+        Surat Keluar
+    </span>
+
+</a>
+
+
+
+{{-- DISPOSISI --}}
 <a href="{{ route('pegawai.disposisi.index') }}"
-class="{{ request()->routeIs('pegawai.disposisi.*')?'active':'' }}">
+   class="{{ request()->routeIs('pegawai.disposisi.*') ? 'active' : '' }}">
 
+    <i class="bi bi-send-check-fill"></i>
 
-<i class="bi bi-send-fill"></i>
-
-
-<span>
-Disposisi
-</span>
-
+    <span>
+        Disposisi
+    </span>
 
 </a>
             

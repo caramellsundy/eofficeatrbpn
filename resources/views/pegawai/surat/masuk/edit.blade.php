@@ -1,6 +1,6 @@
 @extends('layouts.pegawai')
 
-@section('title','Tambah Surat Masuk')
+@section('title','Edit Surat Masuk')
 
 @section('content')
 
@@ -10,7 +10,7 @@
 
         <h2>
 
-            <i class="bi bi-pencil-square text-warning"></i>
+            <i class="bi bi-pencil-square text-warning me-2"></i>
 
             Edit Surat Masuk
 
@@ -18,16 +18,17 @@
 
         <p class="text-muted mb-0">
 
-            Perbarui data surat yang telah dibuat.
+            Perbarui data surat masuk sebelum dikirim.
 
         </p>
 
     </div>
 
-    <a href="{{ route('pegawai.surat.index') }}"
-       class="btn btn-light border">
 
-        <i class="bi bi-arrow-left-circle me-2"></i>
+    <a href="{{ route('pegawai.surat-masuk.index') }}"
+       class="btn btn-secondary">
+
+        <i class="bi bi-arrow-left me-2"></i>
 
         Kembali
 
@@ -36,167 +37,43 @@
 </div>
 
 
-<div class="form-card fade-up">
 
-    <div class="card-header">
+<div class="card shadow-sm border-0 fade-up">
 
-<h4>
+<div class="card-body p-4">
 
-<i class="bi bi-pencil-square me-2 text-warning"></i>
 
-Form Edit Surat
+<form
+action="{{ route('pegawai.surat-masuk.update',$surat->id) }}"
+method="POST"
+enctype="multipart/form-data">
 
-</h4>
-    </div>
 
-    <div class="card-body">
+@csrf
 
-        <form action="{{ route('pegawai.surat.update',$surat->id) }}"
-      method="POST"
-      enctype="multipart/form-data">
+@method('PUT')
 
-    @csrf
-    @method('PUT')
 
-            <div class="row">
 
-                {{-- Nomor Surat --}}
+{{-- NOMOR SURAT --}}
+<div class="mb-3">
 
-                <div class="col-md-6 mb-4">
+<label class="form-label fw-semibold">
 
-                    <label class="form-label">
-
-                        Nomor Surat
-
-                    </label>
-
-                    <input
-                        type="text"
-                        name="nomor_surat"
-                        class="form-control @error('nomor_surat') is-invalid @enderror"
-                       value="{{ old('nomor_surat',$surat->nomor_surat) }}"
-
-                    @error('nomor_surat')
-
-                        <div class="invalid-feedback">
-
-                            {{ $message }}
-
-                        </div>
-
-                    @enderror
-
-                </div>
-
-                {{-- Tanggal Surat --}}
-
-                <div class="col-md-6 mb-4">
-
-                    <label class="form-label">
-
-                        Tanggal Surat
-
-                    </label>
-
-                    <input
-                        type="date"
-                        name="tanggal_surat"
-                        class="form-control @error('tanggal_surat') is-invalid @enderror"
-                        value="{{ old('tanggal_surat',$surat->tanggal_surat) }}"
-
-                    @error('tanggal_surat')
-
-                        <div class="invalid-feedback">
-
-                            {{ $message }}
-
-                        </div>
-
-                    @enderror
-
-                </div>
-
-                                {{-- =========================================== --}}
-                {{-- PERIHAL --}}
-                {{-- =========================================== --}}
-
-                <div class="col-12 mb-4">
-
-                    <label class="form-label">
-
-                        Perihal
-
-                    </label>
-
-                    <input
-                        type="text"
-                        name="perihal"
-                        class="form-control @error('perihal') is-invalid @enderror"
-                        value="{{ old('perihal',$surat->perihal) }}"
-                        placeholder="Masukkan perihal surat">
-
-                    @error('perihal')
-
-                        <div class="invalid-feedback">
-
-                            {{ $message }}
-
-                        </div>
-
-                    @enderror
-
-                </div>
-
-                {{-- =========================================== --}}
-                {{-- ASAL SURAT --}}
-                {{-- =========================================== --}}
-
-                <div class="col-md-6 mb-4">
-
-                    <label class="form-label">
-
-                        Asal Surat
-
-                    </label>
-
-                    <input
-                        type="text"
-                        name="asal_surat"
-                        class="form-control @error('asal_surat') is-invalid @enderror"
-                        value="{{ old('asal_surat',$surat->asal_surat) }}"
-                        placeholder="Instansi / Pengirim">
-
-                    @error('asal_surat')
-
-                        <div class="invalid-feedback">
-
-                            {{ $message }}
-
-                        </div>
-
-                    @enderror
-
-                </div>
-
-                {{-- TUJUAN SURAT --}}
-
-<div class="col-md-6 mb-4">
-
-<label class="form-label">
-
-Tujuan Surat
+    Nomor Surat
 
 </label>
 
+
 <input
 type="text"
-name="tujuan"
-class="form-control @error('tujuan') is-invalid @enderror"
-value="{{ old('tujuan',$surat->tujuan) }}"
-placeholder="Masukkan tujuan surat">
+name="nomor_surat"
+class="form-control @error('nomor_surat') is-invalid @enderror"
+value="{{ old('nomor_surat',$surat->nomor_surat) }}"
+required>
 
 
-@error('tujuan')
+@error('nomor_surat')
 
 <div class="invalid-feedback">
 
@@ -209,289 +86,301 @@ placeholder="Masukkan tujuan surat">
 
 </div>
 
-                {{-- =========================================== --}}
-                {{-- METODE --}}
-                {{-- =========================================== --}}
-
-                <div class="col-md-6 mb-4">
-
-                    <label class="form-label">
-
-                        Metode Pengiriman
-
-                    </label>
-
-                    <select name="metode" class="form-select">
-
-    <option value="">-- Pilih Metode --</option>
-
-    <option value="Email"
-        {{ old('metode',$surat->metode)=='Email' ? 'selected' : '' }}>
-        Email
-    </option>
-
-    <option value="Kurir"
-        {{ old('metode',$surat->metode)=='Kurir' ? 'selected' : '' }}>
-        Kurir
-    </option>
-
-    <option value="Pos"
-        {{ old('metode',$surat->metode)=='Pos' ? 'selected' : '' }}>
-        Pos
-    </option>
-
-    <option value="Langsung"
-        {{ old('metode',$surat->metode)=='Langsung' ? 'selected' : '' }}>
-        Langsung
-    </option>
-
-</select>
-
-                </div>
-
-               
-                {{-- =========================================== --}}
-                {{-- FILE SURAT --}}
-                {{-- =========================================== --}}
-
-                <div class="col-12 mb-4">
-
-                    <label class="form-label">
-
-                        Upload File Surat
-
-                    </label>
-
-                    <input
-                        type="file"
-                        name="file_path"
-                        class="form-control @error('file_path') is-invalid @enderror">
-
-                    <small class="text-muted">
-
-                        Format PDF, DOC, DOCX, JPG, PNG.
-
-                    </small>
-
-                    @error('file_path')
-
-                        <div class="invalid-feedback">
-
-                            {{ $message }}
-
-                        </div>
-
-                    @enderror
-
-                </div>
-
-                                {{-- =========================================== --}}
-                {{-- DESKRIPSI --}}
-                {{-- =========================================== --}}
-
-                <div class="col-12 mb-4">
-
-                    <label class="form-label">
-
-                        Deskripsi
-
-                    </label>
-
-                    <textarea
-name="deskripsi"
-rows="5"
-class="form-control @error('deskripsi') is-invalid @enderror"
-placeholder="Tambahkan keterangan surat">{{ old('deskripsi',$surat->deskripsi) }}</textarea>
-                    @error('deskripsi')
-
-                        <div class="invalid-feedback">
-
-                            {{ $message }}
-
-                        </div>
-
-                    @enderror
-
-                </div>
-
-                {{-- BUTTON --}}
-
-<div class="col-12">
-
-    <hr>
-
-    <div class="form-action">
-
-        <a href="{{ route('pegawai.surat.index') }}"
-           class="btn btn-light border">
-
-            <i class="bi bi-arrow-left-circle me-2"></i>
-
-            Batal
-
-        </a>
 
 
-        <button
-type="submit"
-class="btn btn-warning text-white">
 
-<i class="bi bi-check-circle-fill me-2"></i>
+{{-- TANGGAL SURAT --}}
+<div class="mb-3">
 
-Simpan Perubahan
 
-</button>
+<label class="form-label fw-semibold">
 
-    </div>
+Tanggal Surat
+
+</label>
+
+
+<input
+type="date"
+name="tanggal_surat"
+class="form-control"
+value="{{ old('tanggal_surat',$surat->tanggal_surat) }}"
+required>
+
 
 </div>
 
 
-</div> {{-- row --}}
+
+
+
+{{-- ASAL SURAT --}}
+<div class="mb-3">
+
+
+<label class="form-label fw-semibold">
+
+Asal Surat
+
+</label>
+
+
+<input
+type="text"
+name="asal_surat"
+class="form-control"
+value="{{ old('asal_surat',$surat->asal_surat) }}"
+required>
+
+
+</div>
+
+
+
+
+
+{{-- TUJUAN SURAT --}}
+<div class="mb-3">
+
+
+<label class="form-label fw-semibold">
+
+Tujuan Surat
+
+</label>
+
+
+<input
+type="text"
+name="tujuan_surat"
+class="form-control"
+value="{{ old('tujuan_surat',$surat->tujuan_surat) }}"
+required>
+
+
+</div>
+
+
+
+
+
+{{-- PERIHAL --}}
+<div class="mb-3">
+
+
+<label class="form-label fw-semibold">
+
+Perihal
+
+</label>
+
+
+<input
+type="text"
+name="perihal"
+class="form-control"
+value="{{ old('perihal',$surat->perihal) }}"
+required>
+
+
+</div>
+
+
+
+
+
+{{-- DESKRIPSI --}}
+<div class="mb-3">
+
+
+<label class="form-label fw-semibold">
+
+Deskripsi
+
+</label>
+
+
+<textarea
+name="deskripsi"
+rows="5"
+class="form-control">{{ old('deskripsi',$surat->deskripsi) }}</textarea>
+
+
+</div>
+
+
+
+
+
+{{-- FILE LAMA --}}
+@if($surat->file_path)
+
+
+<div class="mb-3">
+
+
+<label class="form-label fw-semibold">
+
+File Saat Ini
+
+</label>
+
+
+<div>
+
+
+<a
+href="{{ asset('storage/'.$surat->file_path) }}"
+target="_blank"
+class="btn btn-outline-primary btn-sm">
+
+
+<i class="bi bi-file-earmark-text"></i>
+
+Lihat File
+
+
+</a>
+
+
+</div>
+
+
+</div>
+
+
+@endif
+
+
+
+
+
+{{-- UPLOAD FILE --}}
+<div class="mb-4">
+
+
+<label class="form-label fw-semibold">
+
+Ganti File Surat
+<span class="text-muted">
+
+(optional)
+
+</span>
+
+</label>
+
+
+<input
+type="file"
+name="file_path"
+class="form-control">
+
+
+<small class="text-muted">
+
+Format PDF/DOC/JPG maksimal 5 MB
+
+</small>
+
+
+</div>
+
+
+
+
+
+<div class="d-flex justify-content-end gap-2">
+
+
+<a
+href="{{ route('pegawai.surat-masuk.index') }}"
+class="btn btn-light">
+
+Batal
+
+</a>
+
+
+
+<button
+type="submit"
+class="btn btn-primary">
+
+
+<i class="bi bi-save me-2"></i>
+
+Simpan Perubahan
+
+
+</button>
+
+
+</div>
+
+
+
 
 </form>
 
 
 </div>
 
+</div>
+
+
 @endsection
+
+
 
 @push('styles')
 
 <style>
 
-.page-header{
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:25px;
-
-}
-
-.page-header h2{
-
-    font-weight:700;
-    color:#1e293b;
-
-}
-
-.form-card{
-
-    background:#fff;
-    border-radius:20px;
-    overflow:hidden;
-    box-shadow:0 10px 30px rgba(15,76,129,.08);
-
-}
-
-.form-card .card-header{
-
-    background:#fff;
-    border-bottom:1px solid #edf2f7;
-    padding:24px 30px;
-
-}
-
-.form-card .card-header h4{
-
-    margin:0;
-    font-weight:700;
-    color:#1e293b;
-
-}
-
-.form-card .card-body{
-
-    padding:30px;
-
-}
-
-.form-label{
-
-    font-weight:600;
-    color:#334155;
-    margin-bottom:8px;
-
-}
-
-.form-control,
-.form-select{
-
-    min-height:48px;
-    border-radius:12px;
-    border:1px solid #dbe2ea;
-
-}
-
-.form-control:focus,
-.form-select:focus{
-
-    border-color:#0F4C81;
-    box-shadow:0 0 0 .2rem rgba(15,76,129,.15);
-
-}
-
-textarea.form-control{
-
-    min-height:120px;
-    resize:vertical;
-
-}
-
-.form-action{
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-
-}
-
-.form-action .btn{
-
-    min-width:170px;
-    border-radius:12px;
-    padding:10px 18px;
-
-}
-
-.form-check-input{
-
-    width:48px;
-    height:24px;
-
-}
-
-@media(max-width:768px){
 
 .page-header{
 
-    flex-direction:column;
-    align-items:flex-start;
-    gap:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
 
 }
 
-.form-card .card-body{
 
-    padding:20px;
 
-}
+.card{
 
-.form-action{
-
-    flex-direction:column;
+border-radius:18px;
 
 }
 
-.form-action .btn{
 
-    width:100%;
+
+.form-control{
+
+border-radius:12px;
+padding:12px;
 
 }
 
+
+
+label{
+
+color:#334155;
+
 }
+
+
+
+.btn{
+
+border-radius:12px;
+
+}
+
+
 
 </style>
 
