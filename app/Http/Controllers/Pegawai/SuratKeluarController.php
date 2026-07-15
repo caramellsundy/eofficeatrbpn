@@ -58,7 +58,7 @@ public function create()
 {
 
     return view(
-        'pegawai.surat.keluar.create'
+        'pegawai.surat-keluar.create'
     );
 
 }
@@ -167,7 +167,7 @@ $surat->update($request->all());
 
 
 return redirect()
-->route('pegawai.surat.keluar.index')
+->route('pegawai.surat-keluar.index')
 ->with(
 'success',
 'Surat diperbarui'

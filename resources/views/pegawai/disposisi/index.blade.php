@@ -93,7 +93,7 @@
                 <div class="col-md-6">
 
                     <form method="GET"
-                          action="{{ route('pegawai.surat.disposisi.index') }}">
+                          action="{{ route('pegawai.surat-disposisi.index') }}">
 
                         <div class="input-group">
 
@@ -294,7 +294,7 @@
 
         <div class="btn-group">
 
-            <a href="{{ route('pegawai.surat.disposisi.show',$item->id) }}"
+            <a href="{{ route('pegawai.surat-disposisi.show',$item->id) }}"
                class="btn btn-sm btn-primary"
                title="Lihat">
 
@@ -304,7 +304,7 @@
 
             @if($item->status == 'Belum Dibaca')
 
-                <form action="{{ route('pegawai.surat.disposisi.dibaca',$item->id) }}"
+                <form action="{{ route('pegawai.surat-disposisi.dibaca',$item->id) }}"
                       method="POST"
                       class="d-inline">
 
@@ -327,7 +327,7 @@
 
             @if($item->status != 'Selesai')
 
-                <form action="{{ route('pegawai.surat.disposisi.selesai',$item->id) }}"
+                <form action="{{ route('pegawai.surat-disposisi.selesai',$item->id) }}"
                       method="POST"
                       class="d-inline">
 

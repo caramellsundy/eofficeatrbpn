@@ -91,54 +91,61 @@ class SuratMasukController extends Controller
      */
     public function edit($id)
 {
-    $surat = Surat::findOrFail($id);
+    $surat = Surat::where('id', $id)
+        ->where('user_id', auth()->id())
+        ->firstOrFail();
 
-    if($surat->status != 'Menunggu'){
-
-        return back()
-        ->with('error','Surat yang sudah diproses tidak dapat diedit.');
-
+    if ($surat->status != 'Menunggu') {
+        return redirect()
+            ->route('pegawai.surat-masuk.index')
+            ->with('error', 'Surat yang sudah diproses tidak dapat diedit.');
     }
 
-
-    return view(
-        'pegawai.surat.masuk.edit',
-        compact('surat')
-    );
+    return view('pegawai.surat.masuk.edit', compact('surat'));
 }
     /**
      * Update surat
      */
     public function update(Request $request, $id)
-    {
-        $surat = Surat::findOrFail($id);
+{
+    $surat = Surat::where('id', $id)
+        ->where('user_id', auth()->id())
+        ->firstOrFail();
 
-        if ($surat->status != 'Menunggu') {
-            return back()->with('error', 'Surat tidak dapat diubah.');
-        }
-
-        $request->validate([
-            'nomor_surat'   => 'required|unique:surats,nomor_surat,' . $surat->id,
-            'tanggal_surat' => 'required|date',
-            'perihal'       => 'required',
-            'asal_surat'    => 'required',
-            'tujuan_surat'  => 'required',
-            'deskripsi'     => 'nullable',
-        ]);
-
-        $surat->update([
-            'nomor_surat'   => $request->nomor_surat,
-            'tanggal_surat' => $request->tanggal_surat,
-            'perihal'       => $request->perihal,
-            'asal_surat'    => $request->asal_surat,
-            'tujuan_surat'  => $request->tujuan_surat,
-            'deskripsi'     => $request->deskripsi,
-        ]);
-
+    if ($surat->status != 'Menunggu') {
         return redirect()
             ->route('pegawai.surat-masuk.index')
-            ->with('success', 'Surat berhasil diperbarui.');
+            ->with('error', 'Surat sudah tidak dapat diperbarui.');
     }
+
+    $request->validate([
+        'nomor_surat'   => 'required|unique:surat,nomor_surat,' . $surat->id,
+        'tanggal_surat' => 'required|date',
+        'asal_surat'    => 'required',
+        'tujuan_surat'  => 'required',
+        'perihal'       => 'required',
+        'deskripsi'     => 'nullable',
+        'file_path'     => 'nullable|file|max:5120',
+    ]);
+
+    if ($request->hasFile('file_path')) {
+        $file = $request->file('file_path')->store('surat', 'public');
+        $surat->file_path = $file;
+    }
+
+    $surat->nomor_surat   = $request->nomor_surat;
+    $surat->tanggal_surat = $request->tanggal_surat;
+    $surat->asal_surat    = $request->asal_surat;
+    $surat->tujuan_surat  = $request->tujuan_surat;
+    $surat->perihal       = $request->perihal;
+    $surat->deskripsi     = $request->deskripsi;
+
+    $surat->save();
+
+    return redirect()
+        ->route('pegawai.surat-masuk.index')
+        ->with('success', 'Surat berhasil diperbarui.');
+}
 
     /**
      * Hapus surat
