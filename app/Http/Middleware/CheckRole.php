@@ -9,21 +9,20 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckRole
 {
-    public function handle(Request $request, Closure $next, string $role): Response
-    {
-        // 1. Cek apakah user sudah login
-        if (!Auth::check()) {
-            return redirect()->route('login');
-        }
-
-        // 2. Cek kecocokan role
-        if (Auth::user()->role !== $role) {
-            // Daripada redirect terus menerus yang bisa menyebabkan "too many redirects", 
-            // kita berikan pesan error atau arahkan ke halaman utama
-            return redirect()->route('dashboard.index')
-                             ->with('error', 'Anda tidak memiliki akses ke halaman ini.');
-        }
-
-        return $next($request);
+    public function handle(Request $request, Closure $next, ...$roles)
+{
+    if (!auth()->check()) {
+        return redirect()->route('login');
     }
+
+    $user = auth()->user();
+
+    if (!in_array($user->role, $roles)) {
+        abort(403, 'Anda tidak memiliki hak akses.');
+    }
+
+    return $next($request);
+}
+
+    
 }

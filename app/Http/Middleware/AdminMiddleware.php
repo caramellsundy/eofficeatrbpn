@@ -17,7 +17,7 @@ class AdminMiddleware
         }
 
         // 2. Cek apakah user memiliki role 'admin'
-        if (Auth::user()->hasRole('admin')) {
+        if (Auth::user()->isRole('admin')) {
             return $next($request);
         }
 

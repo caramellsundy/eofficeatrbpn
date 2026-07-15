@@ -30,7 +30,7 @@
                                     @csrf @method('PATCH')
                                     <select name="role" onchange="this.form.submit()" class="border-gray-300 rounded-md shadow-sm">
                                         @foreach($roles as $role)
-                                            <option value="{{ $role->name }}" {{ $user->hasRole($role->name) ? 'selected' : '' }}>
+                                            <option value="{{ $role->name }}" {{ $user->isRole($role->name) ? 'selected' : '' }}>
                                                 {{ ucfirst($role->name) }}
                                             </option>
                                         @endforeach

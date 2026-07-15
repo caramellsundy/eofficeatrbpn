@@ -1,95 +1,499 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{
-    DashboardController, AdminController, SuratController, 
-    AdminSuratController, ProfileController, UserController, 
-    Auth\AuthenticatedSessionController, Auth\RegisteredUserController,
-    Auth\PasswordResetLinkController, Auth\NewPasswordController
-};
 
-// 1. Redirect Awal
-Route::get('/', function () {
-    if (auth()->check()) {
-        return redirect()->route('dashboard.index');
+
+/*
+|--------------------------------------------------------------------------
+| AUTH
+|--------------------------------------------------------------------------
+*/
+
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+
+
+/*
+|--------------------------------------------------------------------------
+| PROFILE
+|--------------------------------------------------------------------------
+*/
+
+use App\Http\Controllers\ProfileController;
+
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN
+|--------------------------------------------------------------------------
+*/
+
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminPegawaiController;
+use App\Http\Controllers\Admin\AdminJabatanController;
+use App\Http\Controllers\Admin\AdminUnitKerjaController;
+use App\Http\Controllers\Admin\AdminSuratMasukController;
+use App\Http\Controllers\Admin\AdminSuratKeluarController;
+use App\Http\Controllers\Admin\AdminDisposisiController;
+
+
+/*
+|--------------------------------------------------------------------------
+| PEGAWAI
+|--------------------------------------------------------------------------
+*/
+
+use App\Http\Controllers\Pegawai\DashboardController as PegawaiDashboardController;
+use App\Http\Controllers\Pegawai\SuratMasukController as PegawaiSuratMasukController;
+use App\Http\Controllers\Pegawai\SuratKeluarController as PegawaiSuratKeluarController;
+use App\Http\Controllers\Pegawai\DisposisiController as PegawaiDisposisiController;
+
+
+/*
+|--------------------------------------------------------------------------
+| UMUM
+|--------------------------------------------------------------------------
+*/
+
+use App\Http\Controllers\Umum\DashboardController as UmumDashboardController;
+use App\Http\Controllers\Umum\UmumSuratController;
+
+
+/*
+|--------------------------------------------------------------------------
+| LAINNYA
+|--------------------------------------------------------------------------
+*/
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| HOME
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/', function(){
+
+    return auth()->check()
+        ? redirect()->route('dashboard.index')
+        : redirect()->route('login');
+
+});
+
+
+
+/*
+|--------------------------------------------------------------------------
+| REDIRECT DASHBOARD
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/dashboard', function(){
+
+
+    if(!auth()->check()){
+
+        return redirect()->route('login');
+
     }
-    return redirect()->route('login');
+
+
+    return match(auth()->user()->role){
+
+
+        'admin'
+            => redirect()->route('admin.dashboard'),
+
+
+        'pegawai'
+            => redirect()->route('pegawai.dashboard'),
+
+
+        'umum'
+            => redirect()->route('umum.dashboard'),
+
+
+        default
+            => abort(403)
+
+    };
+
+
+})
+->middleware('auth')
+->name('dashboard.index');
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| AUTH
+|--------------------------------------------------------------------------
+*/
+
+
+Route::middleware('guest')->group(function(){
+
+
+    Route::get('/login',
+        [AuthenticatedSessionController::class,'create'])
+        ->name('login');
+
+
+    Route::post('/login',
+        [AuthenticatedSessionController::class,'store']);
+
+
+
+    Route::get('/register',
+        [RegisteredUserController::class,'create'])
+        ->name('register');
+
+
+
+    Route::post('/register',
+        [RegisteredUserController::class,'store'])
+        ->name('register');
+
+
 });
 
-// --- RUTE PUBLIK ---
-Route::get('/umum/cari', [SuratController::class, 'cariBerkasForm'])->name('umum.cari.form');
-Route::post('/umum/cari', [SuratController::class, 'cariBerkas'])->name('umum.cari.proses');
 
-// 2. Rute Guest
-Route::middleware('guest')->group(function () {
-    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/register', [RegisteredUserController::class, 'store']); 
-    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
-    Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
-    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
-    Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
-    Route::post('/reset-password', [NewPasswordController::class, 'store'])->name('password.store');
+Route::post('/logout',
+    [AuthenticatedSessionController::class,'destroy'])
+    ->middleware('auth')
+    ->name('logout');
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| PROFILE
+|--------------------------------------------------------------------------
+*/
+
+
+Route::middleware('auth')->group(function(){
+
+
+    Route::get('/profile',
+        [ProfileController::class,'edit'])
+        ->name('profile.edit');
+
+
+    Route::patch('/profile',
+        [ProfileController::class,'update'])
+        ->name('profile.update');
+
+
+    Route::put('/profile/password',
+        [ProfileController::class,'updatePassword'])
+        ->name('profile.password.update');
+
+
+    Route::delete('/profile',
+        [ProfileController::class,'destroy'])
+        ->name('profile.destroy');
+
+
 });
 
-// 3. Rute Terlindungi (Wajib Login)
-Route::middleware(['auth'])->group(function () {
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-    Route::get('/dashboard', function () {
-        $user = auth()->user();
-        if ($user->hasRole('admin')) return redirect()->route('admin.dashboard');
-        if ($user->hasRole('pegawai')) return redirect()->route('pegawai.dashboard');
-        return redirect()->route('dashboard.umum');
-    })->name('dashboard.index');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // --- RUTE UMUM ---
-    Route::middleware(['checkRole:umum'])->group(function () {
-        Route::get('/dashboard/umum', [DashboardController::class, 'umumIndex'])->name('dashboard.umum');
-        Route::get('/umum/surat', [SuratController::class, 'indexUmum'])->name('umum.surat.index');
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN
+|--------------------------------------------------------------------------
+*/
+
+
+Route::middleware(['auth','role:admin'])
+->prefix('admin')
+->name('admin.')
+->group(function(){
+
+
+
+    Route::get('/dashboard',
+        [AdminDashboardController::class,'index'])
+        ->name('dashboard');
+
+
+
+    Route::resource(
+        'surat-masuk',
+        AdminSuratMasukController::class
+    )
+    ->names('surat.masuk');
+
+
+
+    Route::resource(
+        'surat-keluar',
+        AdminSuratKeluarController::class
+    )
+    ->names('surat.keluar');
+
+
+
+    Route::resource(
+        'disposisi',
+        AdminDisposisiController::class
+    );
+
+
+
+    Route::resource(
+        'pegawai',
+        AdminPegawaiController::class
+    );
+
+
+
+    Route::resource(
+        'jabatan',
+        AdminJabatanController::class
+    );
+
+
+
+    Route::resource(
+        'unitkerja',
+        AdminUnitKerjaController::class
+    )
+    ->names('unit.kerja');
+
+
+
+    Route::controller(AdminController::class)->group(function(){
+
+
+        Route::get('/laporan',
+            'laporan')
+            ->name('laporan.index');
+
+
+
+        Route::get('/settings',
+            'settings')
+            ->name('settings.index');
+
+
     });
 
-    // --- RUTE ADMIN ---
-    Route::middleware(['checkRole:admin'])->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'adminIndex'])->name('dashboard');
-        
-        Route::get('/users', [AdminController::class, 'userIndex'])->name('users');
-        Route::delete('/users/{id}', [AdminController::class, 'destroyUser'])->name('users.destroy');
-        Route::patch('/users/{id}/role', [AdminController::class, 'updateUserRole'])->name('users.updateRole');
-        Route::patch('/users/{id}/reset-password', [AdminController::class, 'resetUserPassword'])->name('users.resetPassword');
-        
-        Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
-        Route::get('/settings', [AdminController::class, 'settings'])->name('settings');
 
-        Route::prefix('surat')->name('surat.')->group(function () {
-            Route::get('/', [SuratController::class, 'index'])->name('index'); 
-            Route::get('/{id}', [SuratController::class, 'show'])->name('show'); // Rute untuk detail surat
-            Route::get('/{id}/edit', [SuratController::class, 'edit'])->name('edit');
-            Route::patch('/{id}/approve', [SuratController::class, 'approve'])->name('approve');
-            Route::patch('/{id}/update-status', [SuratController::class, 'updateStatus'])->name('updateStatus');
-            Route::delete('/{id}', [SuratController::class, 'destroy'])->name('destroy');
-        });
-    });
+});
 
-    // --- RUTE PEGAWAI ---
-    Route::middleware(['checkRole:pegawai'])->prefix('pegawai')->name('pegawai.')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'pegawaiIndex'])->name('dashboard');
-        
-        Route::prefix('surat')->name('surat.')->group(function () {
-            Route::get('/', [SuratController::class, 'index'])->name('index'); 
-            Route::get('/keluar', [SuratController::class, 'indexKeluar'])->name('keluar'); 
-            Route::get('/disposisi', [SuratController::class, 'indexDisposisi'])->name('disposisi'); 
-            Route::post('/', [SuratController::class, 'store'])->name('store'); 
-            Route::get('/create', [SuratController::class, 'create'])->name('create');
-            Route::get('/cetak-disposisi/{id}', [SuratController::class, 'cetakDisposisi'])->name('cetak.disposisi');
-            Route::get('/{id}/edit', [SuratController::class, 'edit'])->name('edit'); 
-            Route::put('/{id}', [SuratController::class, 'update'])->name('update');
-            Route::delete('/{id}', [SuratController::class, 'destroy'])->name('destroy');
-        });
-    });
+
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| PEGAWAI
+|--------------------------------------------------------------------------
+*/
+
+
+Route::middleware(['auth','role:pegawai'])
+->prefix('pegawai')
+->name('pegawai.')
+->group(function(){
+
+
+
+    Route::get('/dashboard',
+        [PegawaiDashboardController::class,'index'])
+        ->name('dashboard');
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SURAT MASUK
+    |--------------------------------------------------------------------------
+    */
+
+
+    Route::get('/surat-masuk',
+        [PegawaiSuratMasukController::class,'index'])
+        ->name('surat.masuk.index');
+
+
+    Route::get('/surat-masuk/{id}',
+        [PegawaiSuratMasukController::class,'show'])
+        ->name('surat.masuk.show');
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SURAT KELUAR
+    |--------------------------------------------------------------------------
+    */
+
+
+    Route::get('/surat-keluar',
+        [PegawaiSuratKeluarController::class,'index'])
+        ->name('surat.keluar.index');
+
+
+
+    Route::get('/surat-keluar/create',
+        [PegawaiSuratKeluarController::class,'create'])
+        ->name('surat.keluar.create');
+
+
+
+    Route::post('/surat-keluar',
+        [PegawaiSuratKeluarController::class,'store'])
+        ->name('surat.keluar.store');
+
+
+
+    Route::get('/surat-keluar/{id}',
+        [PegawaiSuratKeluarController::class,'show'])
+        ->name('surat.keluar.show');
+
+
+
+    Route::get('/surat-keluar/{id}/edit',
+        [PegawaiSuratKeluarController::class,'edit'])
+        ->name('surat.keluar.edit');
+
+
+
+    Route::put('/surat-keluar/{id}',
+        [PegawaiSuratKeluarController::class,'update'])
+        ->name('surat.keluar.update');
+
+
+
+    Route::delete('/surat-keluar/{id}',
+        [PegawaiSuratKeluarController::class,'destroy'])
+        ->name('surat.keluar.destroy');
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DISPOSISI
+    |--------------------------------------------------------------------------
+    */
+
+
+    Route::get('/disposisi',
+        [PegawaiDisposisiController::class,'index'])
+        ->name('disposisi.index');
+
+
+
+    Route::get('/disposisi/{id}',
+        [PegawaiDisposisiController::class,'show'])
+        ->name('disposisi.show');
+
+
+
+    Route::get('/disposisi/{id}/cetak',
+        [PegawaiDisposisiController::class,'cetak'])
+        ->name('disposisi.cetak');
+
+
+});
+
+
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| UMUM
+|--------------------------------------------------------------------------
+*/
+
+
+Route::middleware('auth')
+->prefix('umum')
+->name('umum.')
+->group(function(){
+
+
+
+    Route::get('/dashboard',
+        [UmumDashboardController::class,'index'])
+        ->name('dashboard');
+
+
+
+    Route::resource(
+        'surat',
+        UmumSuratController::class
+    );
+
+
+
+    Route::get('/cari',
+    [UmumSuratController::class,'cariBerkasForm'])
+    ->name('cari.form');
+
+
+
+    Route::post('/cari',
+    [UmumSuratController::class,'cariBerkas'])
+    ->name('cari.proses');
+
+
+
+    Route::view('/layanan',
+        'umum.layanan.index')
+        ->name('layanan.index');
+
+
+
+    Route::view('/profil',
+        'umum.profil')
+        ->name('profil');
+
+
+
+    Route::view('/struktur-organisasi',
+        'umum.struktur')
+        ->name('struktur');
+
+
+
+    Route::view('/visi-misi',
+        'umum.visi-misi')
+        ->name('visi');
+
+
+
+    Route::view('/menteri',
+        'umum.menteri')
+        ->name('menteri');
+
+
+
+    Route::view('/wakil-menteri',
+        'umum.wakil-menteri')
+        ->name('wakil');
+
+
 });

@@ -1,65 +1,142 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Daftar Surat Saya') }}
-        </h2>
-    </x-slot>
+@extends('layouts.umum')
 
-    <div class="py-12">
-        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
-                <div class="bg-blue-600 px-6 py-4 flex justify-between items-center">
-                    <h1 class="text-lg font-bold text-white uppercase tracking-wide">Riwayat Surat Anda</h1>
-                </div>
+@section('title','Surat Saya')
 
-                <div class="p-6">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left text-gray-500">
-                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
-                                <tr>
-                                    <th class="px-6 py-3">No</th>
-                                    <th class="px-6 py-3">Nomor Surat</th>
-                                    <th class="px-6 py-3">Perihal / Judul</th>
-                                    <th class="px-6 py-3">Tanggal</th>
-                                    <th class="px-6 py-3 text-center">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                @forelse($surats as $index => $surat)
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4">{{ $surats->firstItem() + $index }}</td>
-                                        <td class="px-6 py-4 font-bold text-gray-800">{{ $surat->nomor_surat }}</td>
-                                        <td class="px-6 py-4">{{ $surat->perihal ?? $surat->judul_surat }}</td>
-                                        <td class="px-6 py-4">{{ \Carbon\Carbon::parse($surat->tanggal_surat)->format('d M Y') }}</td>
-                                        <td class="px-6 py-4 text-center">
-                                            <span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold uppercase">
-                                                {{ $surat->status ?? 'Aktif' }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" class="px-6 py-4 text-center text-gray-500 italic">
-                                            Belum ada data surat yang ditemukan.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+@section('content')
 
-                    <div class="mt-4">
-                        {{ $surats->links() }}
-                    </div>
-                </div>
-            </div>
-            
-            <div class="mt-6">
-                <a href="{{ route('dashboard.umum') }}" 
-                   class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition font-bold shadow-sm">
-                    KEMBALI KE DASHBOARD
-                </a>
-            </div>
-        </div>
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between mb-4">
+
+        <h3>Surat Saya</h3>
+
+        <a href="{{ route('umum.surat.create') }}"
+           class="btn btn-primary">
+
+            <i class="bi bi-plus-circle"></i>
+
+            Buat Surat
+
+        </a>
+
     </div>
-</x-app-layout>
+
+    @if(session('success'))
+
+        <div class="alert alert-success">
+
+            {{ session('success') }}
+
+        </div>
+
+    @endif
+
+    <div class="card shadow-sm">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover">
+
+                <thead>
+
+                <tr>
+
+                    <th>No</th>
+                    <th>Nomor</th>
+                    <th>Perihal</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                @forelse($surats as $surat)
+
+                    <tr>
+
+                        <td>{{ $loop->iteration }}</td>
+
+                        <td>{{ $surat->nomor_surat }}</td>
+
+                        <td>{{ $surat->perihal }}</td>
+
+                        <td>
+
+                            <span class="badge bg-info">
+
+                                {{ ucfirst($surat->status) }}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <a href="{{ route('umum.surat.show',$surat->id) }}"
+                               class="btn btn-sm btn-primary">
+
+                                Detail
+
+                            </a>
+
+                            @if($surat->status=='menunggu')
+
+                            <a href="{{ route('umum.surat.edit',$surat->id) }}"
+                               class="btn btn-sm btn-warning">
+
+                                Edit
+
+                            </a>
+
+                            <form
+                                action="{{ route('umum.surat.destroy',$surat->id) }}"
+                                method="POST"
+                                class="d-inline">
+
+                                @csrf
+                                @method('DELETE')
+
+                                <button
+                                    onclick="return confirm('Hapus surat?')"
+                                    class="btn btn-sm btn-danger">
+
+                                    Hapus
+
+                                </button>
+
+                            </form>
+
+                            @endif
+
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr>
+
+                        <td colspan="5" class="text-center">
+
+                            Belum ada surat.
+
+                        </td>
+
+                    </tr>
+
+                @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+@endsection

@@ -26,8 +26,8 @@
                                 <form action="{{ route('admin.user.updateRole', $user->id) }}" method="POST">
                                     @csrf @method('PUT')
                                     <select name="role" onchange="this.form.submit()" class="text-xs border-gray-200 rounded-lg">
-                                        <option value="admin" {{ $user->hasRole('admin') ? 'selected' : '' }}>Admin</option>
-                                        <option value="pegawai" {{ $user->hasRole('pegawai') ? 'selected' : '' }}>Pegawai</option>
+                                        <option value="admin" {{ $user->isRole('admin') ? 'selected' : '' }}>Admin</option>
+                                        <option value="pegawai" {{ $user->isRole('pegawai') ? 'selected' : '' }}>Pegawai</option>
                                     </select>
                                 </form>
                             </td>

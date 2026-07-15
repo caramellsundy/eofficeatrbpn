@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -17,52 +17,95 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
+        // Jika sudah login, arahkan sesuai role
+        if (Auth::check()) {
+
+            $user = Auth::user();
+
+            switch ($user->role) {
+
+                case 'admin':
+                    return redirect()->route('admin.dashboard');
+
+                case 'pegawai':
+                    return redirect()->route('pegawai.dashboard');
+
+                case 'umum':
+                    return redirect()->route('dashboard.umum');
+            }
+        }
+
         return view('auth.login');
     }
 
     /**
-     * Menangani proses autentikasi login.
+     * Proses login.
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        // 1. Authenticate kredensial email & password
+        // Autentikasi email & password
         $request->authenticate();
-        
-        // 2. Regenerasi sesi untuk keamanan
+
+        // Regenerasi session
         $request->session()->regenerate();
 
         $user = Auth::user();
-        $selectedRole = $request->input('login_as');
 
-        // 3. Validasi: Cocokkan role di database dengan role yang dipilih user
-        if ($user->role !== $selectedRole) {
-            Auth::guard('web')->logout();
+        // Role yang dipilih pada form login
+        $selectedRole = strtolower(trim($request->login_as));
+
+        // Role yang tersimpan di database
+        $databaseRole = strtolower(trim($user->role));
+
+        // Pastikan role sesuai
+        if ($databaseRole !== $selectedRole) {
+
+            Auth::logout();
+
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
             throw ValidationException::withMessages([
-                'email' => 'Akses ditolak: Akun ini tidak terdaftar sebagai ' . ucfirst($selectedRole),
+                'login_as' => 'Role yang dipilih tidak sesuai dengan akun.',
             ]);
         }
 
-        // 4. Redirect ke dashboard spesifik berdasarkan role
-        return match ($selectedRole) {
-            'admin'   => redirect()->route('admin.dashboard'),
-            'pegawai' => redirect()->route('pegawai.dashboard'),
-            default   => redirect()->route('dashboard.umum'),
-        };
+        // Redirect sesuai role
+        switch ($databaseRole) {
+
+            case 'admin':
+                return redirect()->route('admin.dashboard');
+
+            case 'pegawai':
+                return redirect()->route('pegawai.dashboard');
+
+            case 'umum':
+                return redirect()->route('umum.dashboard');
+
+            default:
+
+                Auth::logout();
+
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                throw ValidationException::withMessages([
+                    'email' => 'Role pengguna tidak dikenali.',
+                ]);
+        }
     }
 
     /**
-     * Menangani proses logout.
+     * Logout.
      */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
+
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('login');
     }
 }

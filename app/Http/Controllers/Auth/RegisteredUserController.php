@@ -10,49 +10,58 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    public function create(): View
+    /**
+     * Menampilkan halaman register.
+     */
+    public function create()
     {
         return view('auth.register');
     }
 
+    /**
+     * Menyimpan user baru.
+     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'role' => ['required', 'string', 'in:admin,pegawai,umum'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:admin,pegawai,umum'],
         ]);
 
-        // 1. Buat user
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role, // Backup di kolom database
+            'role'     => $request->role,
         ]);
 
-        // 2. SINKRONISASI PENTING: Assign role ke Spatie
-        // Ini memastikan middleware 'can:admin' atau 'role:admin' bekerja
-        $user->assignRole($request->role);
+        // Aktifkan jika menggunakan Spatie Permission
+        /*
+        if (method_exists($user, 'assignRole')) {
+            $user->assignRole($request->role);
+        }
+        */
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        // 3. LOGIKA PENGARAHAN DINAMIS
-        if ($user->hasRole('admin')) {
-            return redirect()->route('admin.dashboard');
-        } elseif ($user->hasRole('pegawai')) {
-            return redirect()->route('dashboard.pegawai');
-        }
-        
-        // Default untuk role 'umum'
-        return redirect()->route('dashboard');
-    }
+        $request->session()->regenerate();
 
+        // Redirect sesuai role
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
+        if ($user->role === 'pegawai') {
+            return redirect()->route('pegawai.dashboard');
+        }
+
+        return redirect()->route('dashboard.umum');
+    }
 }

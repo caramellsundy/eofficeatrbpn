@@ -2,42 +2,102 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Disposisi extends Model
 {
     use HasFactory;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
+     * --------------------------------------------------------------------------
+     * Nama Tabel
+     * --------------------------------------------------------------------------
+     */
+    protected $table = 'disposisi';
+
+    /**
+     * --------------------------------------------------------------------------
+     * Mass Assignment
+     * --------------------------------------------------------------------------
      */
     protected $fillable = [
-        'surat_id', 
-        'dari_pejabat', 
-        'kepada_petugas', 
-        'instruksi', 
-        'status', 
-        'batas_waktu'
+
+        'surat_id',
+
+        'pengirim_id',
+
+        'catatan',
+
+        'prioritas',
+
+        'tanggal_disposisi',
+
     ];
 
     /**
-     * The attributes that should be cast.
-     * Ini memastikan batas_waktu otomatis dikonversi menjadi instance Carbon (DateTime).
+     * --------------------------------------------------------------------------
+     * Casting
+     * --------------------------------------------------------------------------
      */
     protected $casts = [
-        'batas_waktu' => 'datetime',
+
+        'tanggal_disposisi' => 'date',
+
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONSHIP
+    |--------------------------------------------------------------------------
+    */
+
     /**
-     * Relasi ke model Surat.
-     * Satu disposisi pasti milik satu surat.
+     * Surat yang didisposisikan
      */
-    public function surat(): BelongsTo
+    public function surat()
     {
-        return $this->belongsTo(Surat::class);
+        return $this->belongsTo(
+            Surat::class,
+            'surat_id'
+        );
+    }
+
+    /**
+     * User/Admin pengirim disposisi
+     */
+    public function pengirim()
+    {
+        return $this->belongsTo(
+            User::class,
+            'pengirim_id'
+        );
+    }
+
+    /**
+     * Seluruh tujuan disposisi
+     *
+     * Digunakan pada:
+     * AdminDisposisiController
+     * ->with('tujuans.pegawai')
+     */
+    public function tujuans()
+    {
+        return $this->hasMany(
+            DisposisiTujuan::class,
+            'disposisi_id'
+        );
+    }
+
+    /**
+     * Alias lama
+     *
+     * Agar kode lama yang masih memakai:
+     * $disposisi->tujuan
+     * tetap berjalan.
+     */
+    public function tujuan()
+    {
+        return $this->tujuans();
     }
 }

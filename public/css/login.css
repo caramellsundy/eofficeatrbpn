@@ -1,0 +1,845 @@
+/*==================================================
+    E-OFFICE ATR/BPN
+    LOGIN CSS
+==================================================*/
+
+:root{
+
+    --primary:#0d6efd;
+    --primary-dark:#0a58ca;
+    --background:#eef3f8;
+    --white:#ffffff;
+    --text:#2f3a4a;
+    --muted:#6c757d;
+    --border:#dee2e6;
+    --radius:18px;
+
+}
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+}
+
+html,
+body{
+
+    width:100%;
+    height:100%;
+    font-family:'Poppins',sans-serif;
+    background:var(--background);
+
+}
+
+/*=========================================
+    BACKGROUND
+=========================================*/
+
+.login-wrapper{
+
+    min-height:100vh;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:30px 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef4fb 0%,
+            #f8fbff 100%
+        );
+
+}
+
+/*=========================================
+    CONTAINER
+=========================================*/
+
+.login-wrapper .container{
+
+    max-width:1050px;
+
+}
+
+/*=========================================
+    CARD
+=========================================*/
+
+.login-card{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    border:none;
+
+    box-shadow:
+
+        0 20px 60px rgba(0,0,0,.08);
+
+}
+
+/*=========================================
+    ROW
+=========================================*/
+
+.login-card .row{
+
+    min-height:620px;
+
+}
+
+/*=========================================
+    LEFT PANEL
+=========================================*/
+
+.left-panel{
+
+    background:
+
+        linear-gradient(
+            180deg,
+            #0d6efd,
+            #0b5ed7
+        );
+
+    color:#fff;
+
+    height:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+    padding:45px 38px;
+
+}
+
+/*=========================================
+    RIGHT PANEL
+=========================================*/
+
+.right-panel{
+
+    background:#fff;
+
+    padding:55px;
+
+    height:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+}
+
+/*=========================================
+    HEADER
+=========================================*/
+
+.login-header{
+
+    margin-bottom:35px;
+
+}
+
+.login-header h2{
+
+    font-size:32px;
+
+    font-weight:700;
+
+    color:#233044;
+
+    margin-bottom:8px;
+
+}
+
+.login-header p{
+
+    color:#7d8793;
+
+    font-size:15px;
+
+}
+
+/*=========================================
+    ALERT
+=========================================*/
+
+.alert{
+
+    border:none;
+
+    border-radius:12px;
+
+    font-size:14px;
+
+}
+
+/*=========================================
+    FORM
+=========================================*/
+
+.form-label{
+
+    font-weight:600;
+
+    color:#233044;
+
+    margin-bottom:8px;
+
+}
+
+/*==================================================
+    LOGO
+==================================================*/
+
+.logo-box{
+
+    text-align:center;
+
+    margin-bottom:25px;
+
+}
+
+.logo-atr{
+
+    width:90px;
+
+    height:auto;
+
+    display:block;
+
+    margin:0 auto;
+
+}
+
+/*==================================================
+    JUDUL
+==================================================*/
+
+.system-title{
+
+    text-align:center;
+
+    font-size:34px;
+
+    font-weight:700;
+
+    color:#ffffff;
+
+    margin-top:18px;
+
+    margin-bottom:6px;
+
+}
+
+.system-subtitle{
+
+    text-align:center;
+
+    font-size:14px;
+
+    color:rgba(255,255,255,.85);
+
+    margin-bottom:25px;
+
+}
+
+.divider-light{
+
+    width:70px;
+
+    height:3px;
+
+    background:#ffffff;
+
+    opacity:.35;
+
+    margin:0 auto 30px;
+
+    border-radius:50px;
+
+}
+
+/*==================================================
+    DESKRIPSI
+==================================================*/
+
+.welcome-title{
+
+    font-size:24px;
+
+    font-weight:600;
+
+    color:#ffffff;
+
+    margin-bottom:18px;
+
+}
+
+.welcome-text{
+
+    font-size:15px;
+
+    line-height:28px;
+
+    color:rgba(255,255,255,.92);
+
+    margin-bottom:35px;
+
+}
+
+/*==================================================
+    FEATURE
+==================================================*/
+
+.feature-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.feature-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    font-size:15px;
+
+    color:#ffffff;
+
+}
+
+.feature-item i{
+
+    width:36px;
+
+    height:36px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.15);
+
+    color:#ffd54f;
+
+    font-size:18px;
+
+    flex-shrink:0;
+
+}
+
+.feature-item span{
+
+    font-weight:500;
+
+}
+
+/*==================================================
+    FOOTER PANEL KIRI
+==================================================*/
+
+.left-footer{
+
+    margin-top:50px;
+
+    padding-top:20px;
+
+    border-top:1px solid rgba(255,255,255,.15);
+
+    text-align:center;
+
+    font-size:13px;
+
+    color:rgba(255,255,255,.75);
+
+}
+
+/*==================================================
+    FORM CONTAINER
+==================================================*/
+
+.right-panel form{
+
+    width:100%;
+
+}
+
+.right-panel{
+
+    position:relative;
+
+}
+
+.right-panel::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    top:0;
+
+    width:5px;
+
+    height:100%;
+
+    background:#0d6efd;
+
+}
+/*==================================================
+    ROLE LOGIN
+==================================================*/
+
+.role-wrapper{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:12px;
+
+    margin-bottom:30px;
+
+}
+
+.role-btn{
+
+    border:1px solid #dfe5ec;
+
+    background:#ffffff;
+
+    border-radius:14px;
+
+    padding:16px 10px;
+
+    transition:.25s;
+
+    cursor:pointer;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+.role-btn i{
+
+    font-size:22px;
+
+    color:#6c757d;
+
+    margin-bottom:8px;
+
+}
+
+.role-btn span{
+
+    font-size:14px;
+
+    font-weight:600;
+
+    color:#495057;
+
+}
+
+.role-btn:hover{
+
+    border-color:var(--primary);
+
+    background:#f5f9ff;
+
+}
+
+/*==============================
+    ROLE ACTIVE
+==============================*/
+
+.role-btn{
+
+    transition:.3s;
+
+}
+
+.role-btn.active-role{
+
+    color:#fff;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 12px 30px rgba(0,0,0,.12);
+
+}
+
+.role-btn.active-role i,
+
+.role-btn.active-role span{
+
+    color:#fff;
+
+}
+
+/*==============================
+    ADMIN
+==============================*/
+
+.role-btn.admin.active-role{
+
+    background:#0d6efd;
+
+    border-color:#0d6efd;
+
+}
+
+/*==============================
+    PEGAWAI
+==============================*/
+
+.role-btn.pegawai.active-role{
+
+    background:#198754;
+
+    border-color:#198754;
+
+}
+
+/*==============================
+    UMUM
+==============================*/
+
+.role-btn.umum.active-role{
+
+    background:#fd7e14;
+
+    border-color:#fd7e14;
+
+}
+
+/*==================================================
+    INPUT
+==================================================*/
+
+.modern-input{
+
+    border-radius:14px;
+
+    overflow:hidden;
+
+}
+
+.modern-input .input-group-text{
+
+    background:#f8f9fb;
+
+    border:1px solid var(--border);
+
+    border-right:none;
+
+    color:var(--primary);
+
+    width:55px;
+
+    justify-content:center;
+
+}
+
+.modern-input .form-control{
+
+    height:55px;
+
+    border:1px solid var(--border);
+
+    border-left:none;
+
+    box-shadow:none;
+
+    font-size:15px;
+
+}
+
+.modern-input .form-control:focus{
+
+    border-color:var(--primary);
+
+    box-shadow:none;
+
+}
+
+.modern-input .btn{
+
+    border:1px solid var(--border);
+
+    border-left:none;
+
+    background:#f8f9fb;
+
+}
+
+/*==================================================
+    REMEMBER
+==================================================*/
+
+.form-check-input{
+
+    cursor:pointer;
+
+}
+
+.form-check-label{
+
+    cursor:pointer;
+
+    font-size:14px;
+
+}
+
+/*==================================================
+    FORGOT PASSWORD
+==================================================*/
+
+.forgot-link{
+
+    text-decoration:none;
+
+    color:var(--primary);
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+.forgot-link:hover{
+
+    color:var(--primary-dark);
+
+}
+
+/*==================================================
+    BUTTON LOGIN
+==================================================*/
+
+.btn-login{
+
+    height:56px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:var(--primary);
+
+    font-weight:600;
+
+    font-size:16px;
+
+    transition:.25s;
+
+}
+
+.btn-login:hover{
+
+    background:var(--primary-dark);
+
+    transform:translateY(-1px);
+
+}
+
+.btn-login:disabled{
+
+    opacity:.85;
+
+}
+
+/*==================================================
+    DIVIDER
+==================================================*/
+
+.divider{
+
+    position:relative;
+
+    margin:28px 0;
+
+    text-align:center;
+
+}
+
+.divider::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    top:50%;
+
+    width:100%;
+
+    height:1px;
+
+    background:#e5e7eb;
+
+}
+
+.divider span{
+
+    position:relative;
+
+    background:#ffffff;
+
+    padding:0 18px;
+
+    color:#8b95a1;
+
+    font-size:13px;
+
+    font-weight:500;
+
+}
+
+/*==================================================
+    REGISTER
+==================================================*/
+
+.register-box{
+
+    text-align:center;
+
+}
+
+.register-box p{
+
+    margin-bottom:8px;
+
+    color:#6c757d;
+
+}
+
+.register-link{
+
+    text-decoration:none;
+
+    color:var(--primary);
+
+    font-weight:600;
+
+}
+
+.register-link:hover{
+
+    color:var(--primary-dark);
+
+}
+
+/*==================================================
+    RESPONSIVE
+==================================================*/
+
+@media(max-width:991px){
+
+    .left-panel{
+
+        display:none;
+
+    }
+
+    .login-card{
+
+        max-width:560px;
+
+        margin:auto;
+
+    }
+
+    .right-panel{
+
+        padding:35px;
+
+    }
+
+}
+
+@media(max-width:576px){
+
+    .login-wrapper{
+
+        padding:15px;
+
+    }
+
+    .login-card{
+
+        border-radius:15px;
+
+    }
+
+    .right-panel{
+
+        padding:25px;
+
+    }
+
+    .login-header h2{
+
+        font-size:26px;
+
+    }
+
+    .role-wrapper{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .role-btn{
+
+        flex-direction:row;
+
+        justify-content:flex-start;
+
+        gap:15px;
+
+    }
+
+    .role-btn i{
+
+        margin-bottom:0;
+
+    }
+
+}

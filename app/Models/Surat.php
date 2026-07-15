@@ -2,47 +2,174 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Surat extends Model
 {
     use HasFactory;
 
-    /**
-     * Tentukan kolom yang boleh diisi melalui Mass Assignment
-     */
+    protected $table = 'surats';
+
     protected $fillable = [
-        'user_id', 
-        'jenis_surat', 
-        'kode_surat', 
-        'nomor_surat', 
-        'nomor_agenda', 
-        'judul_surat', 
-        'metode', 
-        'asal_surat', 
+
+        'user_id',
+
+        'jenis_surat',
+
+        'nomor_surat',
         'tanggal_surat',
-        'tanggal_terima', // Pastikan kolom ini sudah ada di database
-        'status', 
-        'kantor_id', 
-        'tahun', 
-        'perihal',        // Sudah ditambahkan
-        'is_priority'     // Tambahan untuk fitur filter prioritas
+        'tanggal_keluar',
+        'tanggal_kirim',
+
+        'nomor_agenda',
+        'kode_surat',
+
+        'judul_surat',
+        'perihal',
+        'lampiran',
+
+        'asal_surat',
+        'tujuan_surat',
+
+        'penandatangan',
+
+        'metode',
+        'deskripsi',
+
+        'file_path',
+
+        'is_priority',
+
+        'status',
+        'catatan_admin',
+
     ];
 
+    protected $casts = [
+
+        'tanggal_surat'  => 'date',
+        'tanggal_keluar' => 'date',
+        'tanggal_kirim'  => 'date',
+
+        'is_priority'    => 'boolean',
+
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONSHIP
+    |--------------------------------------------------------------------------
+    */
+
     /**
-     * Relasi: Satu surat bisa memiliki banyak disposisi
+     * User pembuat surat
      */
-    public function disposisiTujuans() 
+    public function user()
     {
-        return $this->hasMany(DisposisiTujuan::class);
+        return $this->belongsTo(User::class);
     }
 
     /**
-     * Relasi: Satu surat memiliki banyak log aktivitas
+     * Semua disposisi surat
      */
-    public function logs() 
+    public function disposisi()
     {
-        return $this->hasMany(SuratLog::class);
+        return $this->hasMany(Disposisi::class, 'surat_id');
+    }
+
+    /**
+     * Semua log aktivitas surat
+     */
+    public function logs()
+    {
+        return $this->hasMany(LogAktivitas::class, 'surat_id')
+                    ->latest();
+    }
+
+    /**
+ * Semua tujuan disposisi surat
+ */
+public function disposisiTujuans()
+{
+    return $this->hasManyThrough(
+        DisposisiTujuan::class,
+        Disposisi::class,
+        'surat_id',
+        'disposisi_id',
+        'id',
+        'id'
+    );
+}
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACCESSOR
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Badge Bootstrap berdasarkan status
+     */
+    public function getStatusBadgeAttribute()
+    {
+        return match ($this->status) {
+
+            'menunggu' => 'warning',
+
+            'diproses' => 'info',
+
+            'selesai' => 'success',
+
+            'ditolak' => 'danger',
+
+            default => 'secondary',
+        };
+    }
+
+    /**
+     * Label status
+     */
+    public function getStatusLabelAttribute()
+    {
+        return ucfirst($this->status ?? '-');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | QUERY SCOPE
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Surat masuk
+     */
+    public function scopeMasuk($query)
+    {
+        return $query->where('jenis_surat', 'masuk');
+    }
+
+    /**
+     * Surat keluar
+     */
+    public function scopeKeluar($query)
+    {
+        return $query->where('jenis_surat', 'keluar');
+    }
+
+    /**
+     * Berdasarkan status
+     */
+    public function scopeStatus($query, $status)
+    {
+        return $query->where('status', $status);
+    }
+
+    /**
+     * Berdasarkan user
+     */
+    public function scopeMilikUser($query, $userId)
+    {
+        return $query->where('user_id', $userId);
     }
 }

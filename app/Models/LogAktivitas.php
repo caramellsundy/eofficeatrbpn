@@ -19,10 +19,13 @@ class LogAktivitas extends Model
      * Kolom yang dapat diisi
      */
     protected $fillable = [
-        'user_id',
-        'action',
-        'description',
-    ];
+
+    'user_id',
+    'surat_id',
+    'action',
+    'description',
+
+];
 
     /**
      * Relasi ke User (Satu log milik satu user)
@@ -31,4 +34,9 @@ class LogAktivitas extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function surat()
+{
+    return $this->belongsTo(Surat::class);
+}
 }
