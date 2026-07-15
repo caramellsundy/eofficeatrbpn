@@ -641,125 +641,208 @@
 
 
     {{-- ===================================================== --}}
-    {{-- DISPOSISI TERBARU --}}
-    {{-- ===================================================== --}}
+{{-- DISPOSISI TERBARU --}}
+{{-- ===================================================== --}}
 
-   <div class="card border-0 shadow-sm h-100">
-    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-        <h5 class="fw-bold mb-0">
-            <i class="bi bi-send text-success me-2"></i>
-            Disposisi Terbaru
-        </h5>
+<div class="col-lg-6">
 
-        <a href="{{ route('pegawai.disposisi.index') }}" class="btn btn-outline-success rounded-pill px-4">
-            Lihat Semua
-        </a>
-    </div>
+    <div class="card border-0 shadow-sm rounded-4 card-disposisi h-100">
 
-    <div class="table-responsive">
+        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
 
-        <table class="table align-middle mb-0">
+            <h5 class="fw-bold mb-0">
 
-            <thead class="table-light">
-                <tr>
-                    <th>NO SURAT</th>
-                    <th>PRIORITAS</th>
-                    <th>TANGGAL</th>
-                    <th>STATUS</th>
-                </tr>
-            </thead>
+                <i class="bi bi-send text-success me-2"></i>
 
-            <tbody>
+                Disposisi Terbaru
 
-                @forelse($disposisiTerbaru as $item)
+            </h5>
+
+
+            <a href="{{ route('pegawai.disposisi.index') }}"
+               class="btn btn-outline-success rounded-pill px-4">
+
+                Lihat Semua
+
+            </a>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table align-middle mb-0">
+
+                <thead class="table-light">
 
                     <tr>
 
-                        <td>
-                            {{ optional(optional($item->disposisi)->surat)->nomor_surat ?? '-' }}
-                        </td>
+                        <th>NO SURAT</th>
+                        <th>PRIORITAS</th>
+                        <th>TANGGAL</th>
+                        <th>STATUS</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                @forelse($disposisiTerbaru as $item)
+
+
+                    <tr>
+
 
                         <td>
+
+                            {{ optional($item->surat)->nomor_surat ?? '-' }}
+
+                        </td>
+
+
+
+                        <td>
+
+
                             @php
+
                                 $prioritas = optional($item->disposisi)->prioritas;
+
                             @endphp
 
+
                             @if($prioritas == 'Tinggi')
-                                <span class="badge bg-danger">{{ $prioritas }}</span>
+
+                                <span class="badge bg-danger">
+                                    Tinggi
+                                </span>
+
 
                             @elseif($prioritas == 'Sedang')
-                                <span class="badge bg-warning text-dark">{{ $prioritas }}</span>
+
+                                <span class="badge bg-warning text-dark">
+                                    Sedang
+                                </span>
+
 
                             @else
-                                <span class="badge bg-success">{{ $prioritas }}</span>
+
+                                <span class="badge bg-success">
+                                    Rendah
+                                </span>
+
+
                             @endif
+
+
                         </td>
 
+
+
+
                         <td>
+
                             {{ optional($item->disposisi)->tanggal_disposisi
-                                ? \Carbon\Carbon::parse($item->disposisi->tanggal_disposisi)->format('d M Y')
-                                : '-' }}
+                                ? \Carbon\Carbon::parse(
+                                    $item->disposisi->tanggal_disposisi
+                                  )->format('d M Y')
+                                : '-'
+                            }}
+
                         </td>
 
+
+
+
                         <td>
+
 
                             @if($item->status == 'Belum Dibaca')
 
-                                <span class="badge bg-secondary">
+                                <span class="badge bg-warning text-dark">
+
                                     Belum Dibaca
+
                                 </span>
+
 
                             @elseif($item->status == 'Sudah Dibaca')
 
                                 <span class="badge bg-primary">
+
                                     Sudah Dibaca
+
                                 </span>
+
 
                             @elseif($item->status == 'Selesai')
 
                                 <span class="badge bg-success">
+
                                     Selesai
+
                                 </span>
 
-                            @else
-
-                                <span class="badge bg-light text-dark">
-                                    {{ $item->status }}
-                                </span>
 
                             @endif
 
+
                         </td>
+
 
                     </tr>
 
+
+
                 @empty
+
 
                     <tr>
 
                         <td colspan="4" class="text-center py-5">
 
+
                             <i class="bi bi-send-x display-5 text-secondary"></i>
 
+
                             <h5 class="mt-3">
+
                                 Belum ada disposisi.
+
                             </h5>
 
-                            <p class="text-muted mb-0">
+
+                            <p class="text-muted">
+
                                 Disposisi yang diterima akan muncul di sini.
+
                             </p>
+
 
                         </td>
 
                     </tr>
 
+
                 @endforelse
 
-            </tbody>
 
-        </table>
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
 
     </div>
+
+
 </div>
 
 @endsection
