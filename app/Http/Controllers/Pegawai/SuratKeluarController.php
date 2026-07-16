@@ -14,198 +14,451 @@ class SuratKeluarController extends Controller
 {
 
 
-public function index(Request $request)
+    public function index(Request $request)
+    {
+        $query = Surat::where('user_id', Auth::id())
+            ->where('jenis_surat', 'keluar');
+
+        if ($request->filled('keyword')) {
+
+            $query->where(function ($q) use ($request) {
+
+                $q->where(
+                    'nomor_surat',
+                    'like',
+                    '%' . $request->keyword . '%'
+                )
+                ->orWhere(
+                    'perihal',
+                    'like',
+                    '%' . $request->keyword . '%'
+                )
+                ->orWhere(
+                    'tujuan_surat',
+                    'like',
+                    '%' . $request->keyword . '%'
+                );
+
+            });
+
+        }
+
+        if ($request->filled('status')) {
+
+            $query->where(
+                'status',
+                $request->status
+            );
+
+        }
+
+        $surat = $query
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view(
+            'pegawai.surat.keluar.index',
+            compact('surat')
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | FORM TAMBAH
+    |--------------------------------------------------------------------------
+    */
+
+    public function create()
 {
+    $jabatans = Jabatan::orderBy('nama')->get();
 
-    $surat = Surat::where('user_id',Auth::id())
-        ->where('jenis_surat','keluar')
-        ->when(
-            $request->keyword,
-            function($q) use($request){
+    return view(
+        'pegawai.surat.keluar.create',
+        compact('jabatans')
+    );
+}
 
-                $q->where(function($x) use($request){
+    /*
+    |--------------------------------------------------------------------------
+    | SIMPAN
+    |--------------------------------------------------------------------------
+    */
 
-                    $x->where(
-                        'nomor_surat',
-                        'like',
-                        '%'.$request->keyword.'%'
-                    )
-                    ->orWhere(
-                        'perihal',
-                        'like',
-                        '%'.$request->keyword.'%'
+    public function store(Request $request)
+    {
+
+        $request->validate([
+
+            'nomor_surat'          => 'required|unique:surat,nomor_surat',
+
+            'tanggal_surat'        => 'required|date',
+
+            'perihal'              => 'required',
+
+            'tujuan_surat'         => 'required',
+
+            'jabatan_pimpinan_id'  => 'required',
+
+            'nama_pimpinan'        => 'required',
+
+            'deskripsi'            => 'nullable',
+
+            'file_path'            => 'nullable|mimes:pdf,doc,docx|max:5120',
+
+        ]);
+
+
+
+        $file = null;
+
+        if ($request->hasFile('file_path')) {
+
+            $file = $request
+                ->file('file_path')
+                ->store(
+                    'surat-keluar',
+                    'public'
+                );
+
+        }
+
+
+
+        $surat = Surat::create([
+
+            'user_id' => Auth::id(),
+
+            'jenis_surat' => 'keluar',
+
+            'nomor_surat' => $request->nomor_surat,
+
+            'tanggal_surat' => $request->tanggal_surat,
+
+            'perihal' => $request->perihal,
+
+            'tujuan_surat' => $request->tujuan_surat,
+
+            'jabatan_pimpinan_id'
+                => $request->jabatan_pimpinan_id,
+
+            'nama_pimpinan'
+                => $request->nama_pimpinan,
+
+            'deskripsi'
+                => $request->deskripsi,
+
+            'file_path'
+                => $file,
+
+            'status'
+                => 'Menunggu',
+
+        ]);
+
+
+        LogAktivitas::create([
+
+            'user_id' => Auth::id(),
+
+            'surat_id' => $surat->id,
+
+            'action' => 'Membuat Surat Keluar',
+
+            'description'
+                => 'Membuat Surat Keluar '
+                . $surat->nomor_surat,
+
+        ]);
+
+
+        return redirect()
+            ->route('pegawai.surat-keluar.index')
+            ->with(
+                'success',
+                'Surat keluar berhasil dibuat.'
+            );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DETAIL
+    |--------------------------------------------------------------------------
+    */
+
+    public function show($id)
+    {
+        $surat = Surat::with('jabatanPimpinan')
+            ->findOrFail($id);
+
+        return view(
+            'pegawai.surat.keluar.show',
+            compact('surat')
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | FORM EDIT
+    |--------------------------------------------------------------------------
+    */
+
+    public function edit($id)
+    {
+        $surat = Surat::findOrFail($id);
+
+        if ($surat->status != 'Menunggu') {
+
+            return back()
+                ->with(
+                    'error',
+                    'Surat yang sudah diproses tidak dapat diedit.'
+                );
+
+        }
+
+        $jabatan = Jabatan::orderBy('nama')->get();
+
+        return view(
+            'pegawai.surat.keluar.edit',
+            compact(
+                'surat',
+                'jabatan'
+            )
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE
+    |--------------------------------------------------------------------------
+    */
+
+    public function update(
+        Request $request,
+        $id
+    )
+    {
+
+        $surat = Surat::findOrFail($id);
+
+        if ($surat->status != 'Menunggu') {
+
+            return back()
+                ->with(
+                    'error',
+                    'Surat yang sudah diproses tidak dapat diedit.'
+                );
+
+        }
+
+        $request->validate([
+
+            'nomor_surat'
+                => 'required|unique:surat,nomor_surat,' . $surat->id,
+
+            'tanggal_surat'
+                => 'required|date',
+
+            'perihal'
+                => 'required',
+
+            'tujuan_surat'
+                => 'required',
+
+            'jabatan_pimpinan_id'
+                => 'required',
+
+            'nama_pimpinan'
+                => 'required',
+
+            'deskripsi'
+                => 'nullable',
+
+            'file_path'
+                => 'nullable|mimes:pdf,doc,docx|max:5120',
+
+        ]);
+
+
+        if ($request->hasFile('file_path')) {
+
+            if ($surat->file_path) {
+
+                Storage::disk('public')
+                    ->delete(
+                        $surat->file_path
                     );
 
-                });
-
             }
-        )
-        ->latest()
-        ->paginate(10);
 
+            $surat->file_path =
+                $request
+                    ->file('file_path')
+                    ->store(
+                        'surat-keluar',
+                        'public'
+                    );
+        }
 
 
-    return view(
-        'pegawai.surat.keluar.index',
-        compact('surat')
-    );
+        $surat->update([
 
-}
+            'nomor_surat'
+                => $request->nomor_surat,
 
+            'tanggal_surat'
+                => $request->tanggal_surat,
 
+            'perihal'
+                => $request->perihal,
 
-public function create()
-{
+            'tujuan_surat'
+                => $request->tujuan_surat,
 
-    return view(
-        'pegawai.surat-keluar.create'
-    );
+            'jabatan_pimpinan_id'
+                => $request->jabatan_pimpinan_id,
 
-}
+            'nama_pimpinan'
+                => $request->nama_pimpinan,
 
+            'deskripsi'
+                => $request->deskripsi,
 
+        ]);
 
-public function store(Request $request)
-{
 
+        LogAktivitas::create([
 
-$request->validate([
+            'user_id' => Auth::id(),
 
-    'nomor_surat'=>'required',
+            'surat_id' => $surat->id,
 
-    'tanggal_surat'=>'required|date',
+            'action' => 'Mengubah Surat Keluar',
 
-    'perihal'=>'required'
+            'description'
+                => 'Mengubah Surat '
+                . $surat->nomor_surat,
 
-]);
+        ]);
 
 
+        return redirect()
+            ->route('pegawai.surat-keluar.index')
+            ->with(
+                'success',
+                'Surat berhasil diperbarui.'
+            );
+    }
 
-$surat = Surat::create([
 
-'user_id'=>Auth::id(),
+    /*
+    |--------------------------------------------------------------------------
+    | HAPUS
+    |--------------------------------------------------------------------------
+    */
 
-'jenis_surat'=>'keluar',
+    public function destroy($id)
+    {
+        $surat = Surat::findOrFail($id);
 
-'nomor_surat'=>$request->nomor_surat,
+        if ($surat->status != 'Menunggu') {
 
-'tanggal_surat'=>$request->tanggal_surat,
+            return back()
+                ->with(
+                    'error',
+                    'Surat yang sudah diproses tidak dapat dihapus.'
+                );
 
-'perihal'=>$request->perihal,
+        }
 
-'deskripsi'=>$request->deskripsi,
+        if ($surat->file_path) {
 
-'status'=>'menunggu'
+            Storage::disk('public')
+                ->delete(
+                    $surat->file_path
+                );
 
-]);
+        }
 
+        LogAktivitas::create([
 
+            'user_id' => Auth::id(),
 
-LogAktivitas::create([
+            'surat_id' => $surat->id,
 
-'user_id'=>Auth::id(),
+            'action' => 'Menghapus Surat Keluar',
 
-'surat_id'=>$surat->id,
+            'description'
+                => 'Menghapus Surat '
+                . $surat->nomor_surat,
 
-'action'=>'Membuat Surat',
+        ]);
 
-'description'=>'Surat '.$surat->nomor_surat
+        $surat->delete();
 
-]);
+        return redirect()
+            ->route('pegawai.surat-keluar.index')
+            ->with(
+                'success',
+                'Surat berhasil dihapus.'
+            );
+    }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | KIRIM SURAT
+    |--------------------------------------------------------------------------
+    */
 
-return redirect()
-->route('pegawai.surat.keluar.index')
-->with(
-'success',
-'Surat berhasil dibuat'
-);
+    public function kirim($id)
+    {
 
+        $surat = Surat::findOrFail($id);
 
-}
+        if ($surat->status != 'Menunggu') {
 
+            return back()
+                ->with(
+                    'error',
+                    'Surat sudah diproses.'
+                );
 
+        }
 
-public function show($id)
-{
+        $surat->update([
 
-$surat=Surat::findOrFail($id);
+            'status' => 'Diproses'
 
+        ]);
 
-return view(
-'pegawai.surat.keluar.show',
-compact('surat')
-);
 
-}
+        LogAktivitas::create([
 
+            'user_id' => Auth::id(),
 
+            'surat_id' => $surat->id,
 
-public function edit($id)
-{
+            'action' => 'Mengirim Surat Keluar',
 
-$surat=Surat::findOrFail($id);
+            'description'
+                => 'Mengirim Surat '
+                . $surat->nomor_surat,
 
+        ]);
 
-return view(
-'pegawai.surat.keluar.edit',
-compact('surat')
-);
 
-}
-
-
-
-public function update(Request $request,$id)
-{
-
-$surat=Surat::findOrFail($id);
-
-
-$surat->update($request->all());
-
-
-return redirect()
-->route('pegawai.surat-keluar.index')
-->with(
-'success',
-'Surat diperbarui'
-);
-
-
-}
-
-
-
-
-public function destroy($id)
-{
-
-
-$surat=Surat::findOrFail($id);
-
-
-if($surat->file_path){
-
-Storage::disk('public')
-->delete($surat->file_path);
-
-}
-
-
-$surat->delete();
-
-
-
-return back()
-->with(
-'success',
-'Surat dihapus'
-);
-
-
-}
-
+        return redirect()
+            ->route('pegawai.surat-keluar.index')
+            ->with(
+                'success',
+                'Surat berhasil dikirim.'
+            );
+    }
 
 }

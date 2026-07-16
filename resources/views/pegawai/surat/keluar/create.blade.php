@@ -4,138 +4,35 @@
 
 @section('content')
 
-{{-- Bootstrap Icons --}}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<div class="container-fluid">
 
-{{-- Select2 --}}
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
-
-<style>
-
-body{
-    background:#f4f6f9;
-}
-
-.page-title{
-    font-size:28px;
-    font-weight:700;
-    color:#0d6efd;
-}
-
-.card-custom{
-    border:none;
-    border-radius:14px;
-    overflow:hidden;
-    box-shadow:0 5px 18px rgba(0,0,0,.08);
-}
-
-.card-header-custom{
-    background:#0d6efd;
-    color:#fff;
-    padding:18px 25px;
-}
-
-.card-header-custom h5{
-    margin:0;
-    font-weight:700;
-}
-
-.form-label{
-    font-weight:600;
-    color:#495057;
-}
-
-.form-control,
-.form-select{
-    border-radius:10px;
-    min-height:46px;
-}
-
-textarea.form-control{
-    min-height:140px;
-}
-
-.btn{
-    border-radius:10px;
-    font-weight:600;
-    padding:10px 22px;
-}
-
-.required{
-    color:red;
-}
-
-.select2-container--default .select2-selection--single{
-
-    height:46px;
-
-    border-radius:10px;
-
-    border:1px solid #ced4da;
-
-}
-
-.select2-selection__rendered{
-
-    line-height:44px !important;
-
-}
-
-.select2-selection__arrow{
-
-    height:44px !important;
-
-}
-
-.select2-results__group{
-
-    background:#0d6efd;
-
-    color:#fff;
-
-    padding:8px;
-
-    font-weight:bold;
-
-}
-
-.file-preview{
-
-    margin-top:10px;
-
-    display:none;
-
-}
-
-</style>
-
-<div class="container-fluid py-4">
-
-    {{-- Header --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    {{-- =========================
+        PAGE HEADER
+    ========================== --}}
+    <div class="page-header fade-up">
 
         <div>
 
-            <h2 class="page-title">
+            <h2>
 
-                <i class="bi bi-send-fill"></i>
+                <i class="bi bi-send-plus-fill text-primary me-2"></i>
 
                 Tambah Surat Keluar
 
             </h2>
 
-            <small class="text-muted">
+            <p class="text-muted mb-0">
 
-                Input surat keluar dan kirim ke pegawai tujuan.
+                Buat surat keluar baru untuk dikirim kepada pimpinan atau instansi tujuan.
 
-            </small>
+            </p>
 
         </div>
 
-        <a href="{{ route('pegawai.surat.keluar') }}"
-           class="btn btn-secondary">
+        <a href="{{ route('pegawai.surat-keluar.index') }}"
+           class="btn btn-light shadow-sm">
 
-            <i class="bi bi-arrow-left-circle"></i>
+            <i class="bi bi-arrow-left-circle me-2"></i>
 
             Kembali
 
@@ -143,12 +40,60 @@ textarea.form-control{
 
     </div>
 
-    {{-- Alert Error --}}
+
+    {{-- =========================
+        ALERT
+    ========================== --}}
+
+    @if(session('success'))
+
+        <div class="alert alert-success alert-dismissible fade show">
+
+            <i class="bi bi-check-circle-fill me-2"></i>
+
+            {{ session('success') }}
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+    @endif
+
+
+    @if(session('error'))
+
+        <div class="alert alert-danger alert-dismissible fade show">
+
+            <i class="bi bi-exclamation-circle-fill me-2"></i>
+
+            {{ session('error') }}
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+    @endif
+
+
     @if($errors->any())
 
         <div class="alert alert-danger">
 
-            <strong>Terjadi Kesalahan</strong>
+            <strong>
+
+                <i class="bi bi-x-circle-fill me-2"></i>
+
+                Terjadi kesalahan.
+
+            </strong>
 
             <hr>
 
@@ -166,120 +111,197 @@ textarea.form-control{
 
     @endif
 
-    <div class="card card-custom">
 
-        <div class="card-header-custom">
 
-            <h5>
+    {{-- =========================
+        FORM CARD
+    ========================== --}}
 
-                <i class="bi bi-envelope-paper-fill"></i>
+    <form
+        action="{{ route('pegawai.surat-keluar.store') }}"
+        method="POST"
+        enctype="multipart/form-data">
 
-                FORM SURAT KELUAR
+        @csrf
 
-            </h5>
+        <div class="form-card fade-up">
 
-        </div>
+            <div class="card-header-custom">
 
-        <div class="card-body p-4">
+                <h4>
 
-            <form
-                action="{{ route('pegawai.surat.store') }}"
-                method="POST"
-                enctype="multipart/form-data">
+                    <i class="bi bi-file-earmark-text-fill text-primary me-2"></i>
 
-                @csrf
+                    Informasi Surat
 
-                <input
-                    type="hidden"
-                    name="jenis_surat"
-                    value="keluar">
+                </h4>
 
-                <div class="row">
+                <small>
+
+                    Lengkapi data surat sebelum dikirim.
+
+                </small>
+
+            </div>
+
+
+            <div class="card-body-custom">
+
+                <div class="row g-4">
 
                     {{-- Nomor Surat --}}
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-6">
 
                         <label class="form-label">
 
                             Nomor Surat
 
-                            <span class="required">*</span>
+                            <span class="text-danger">*</span>
 
                         </label>
 
                         <input
                             type="text"
                             name="nomor_surat"
-                            class="form-control"
+                            class="form-control @error('nomor_surat') is-invalid @enderror"
                             value="{{ old('nomor_surat') }}"
-                            required>
+                            placeholder="Masukkan nomor surat">
+
+                        @error('nomor_surat')
+
+                            <div class="invalid-feedback">
+
+                                {{ $message }}
+
+                            </div>
+
+                        @enderror
 
                     </div>
 
-                    {{-- Tanggal --}}
-                    <div class="col-md-6 mb-3">
+
+
+                    {{-- Tanggal Surat --}}
+                    <div class="col-md-6">
 
                         <label class="form-label">
 
                             Tanggal Surat
 
-                            <span class="required">*</span>
+                            <span class="text-danger">*</span>
 
                         </label>
 
                         <input
                             type="date"
                             name="tanggal_surat"
-                            class="form-control"
-                            value="{{ old('tanggal_surat',date('Y-m-d')) }}"
-                            required>
+                            class="form-control @error('tanggal_surat') is-invalid @enderror"
+                            value="{{ old('tanggal_surat', date('Y-m-d')) }}">
+
+                        @error('tanggal_surat')
+
+                            <div class="invalid-feedback">
+
+                                {{ $message }}
+
+                            </div>
+
+                        @enderror
 
                     </div>
+                                        {{-- =========================
+                        PENGIRIM
+                    ========================== --}}
 
-                                        {{-- Perihal --}}
-                    <div class="col-md-12 mb-3">
+                    <div class="col-md-6">
 
                         <label class="form-label">
 
-                            Perihal
-
-                            <span class="required">*</span>
+                            Nama Pengirim
 
                         </label>
 
                         <input
                             type="text"
-                            name="perihal"
                             class="form-control"
-                            value="{{ old('perihal') }}"
-                            placeholder="Contoh : Permohonan Data"
-                            required>
+                            value="{{ auth()->user()->name }}"
+                            readonly>
 
                     </div>
 
-                    {{-- Judul Surat --}}
-                    <div class="col-md-12 mb-3">
+
+
+                    <div class="col-md-6">
 
                         <label class="form-label">
 
-                            Judul Surat
-
-                            <span class="required">*</span>
+                            Jabatan Pengirim
 
                         </label>
 
                         <input
                             type="text"
-                            name="judul_surat"
                             class="form-control"
-                            value="{{ old('judul_surat') }}"
-                            placeholder="Masukkan judul surat"
-                            required>
+                            value="{{ auth()->user()->pegawai->jabatan->nama ?? '-' }}"
+                            readonly>
 
                     </div>
 
-                    {{-- Tujuan Instansi --}}
-                    <div class="col-md-6 mb-3">
+
+
+                    {{-- =========================
+                        TUJUAN SURAT
+                    ========================== --}}
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+
+                            Ditujukan Kepada
+
+                            <span class="text-danger">*</span>
+
+                        </label>
+
+                        <select
+                            name="jabatan_tujuan_id"
+                            class="form-select @error('jabatan_tujuan_id') is-invalid @enderror">
+
+                            <option value="">
+
+                                -- Pilih Jabatan --
+
+                            </option>
+
+                            @foreach($jabatans as $jabatan)
+
+                                <option
+                                    value="{{ $jabatan->id }}"
+                                    {{ old('jabatan_tujuan_id')==$jabatan->id ? 'selected' : '' }}>
+
+                                    {{ $jabatan->nama }}
+
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
+                        @error('jabatan_tujuan_id')
+
+                            <div class="invalid-feedback">
+
+                                {{ $message }}
+
+                            </div>
+
+                        @enderror
+
+                    </div>
+
+
+
+                    <div class="col-md-6">
 
                         <label class="form-label">
 
@@ -290,32 +312,29 @@ textarea.form-control{
                         <input
                             type="text"
                             name="tujuan_surat"
-                            class="form-control"
+                            class="form-control @error('tujuan_surat') is-invalid @enderror"
                             value="{{ old('tujuan_surat') }}"
-                            placeholder="Contoh : Kantor Pertanahan Kota Banda Aceh">
+                            placeholder="Contoh : Kantor Wilayah ATR/BPN">
+
+                        @error('tujuan_surat')
+
+                            <div class="invalid-feedback">
+
+                                {{ $message }}
+
+                            </div>
+
+                        @enderror
 
                     </div>
 
-                    {{-- Nomor Agenda --}}
-                    <div class="col-md-6 mb-3">
 
-                        <label class="form-label">
 
-                            Nomor Agenda
+                    {{-- =========================
+                        KODE SURAT
+                    ========================== --}}
 
-                        </label>
-
-                        <input
-                            type="text"
-                            name="nomor_agenda"
-                            class="form-control"
-                            value="{{ old('nomor_agenda') }}"
-                            placeholder="Opsional">
-
-                    </div>
-
-                    {{-- Kode Surat --}}
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-6">
 
                         <label class="form-label">
 
@@ -326,288 +345,100 @@ textarea.form-control{
                         <input
                             type="text"
                             name="kode_surat"
-                            class="form-control"
+                            class="form-control @error('kode_surat') is-invalid @enderror"
                             value="{{ old('kode_surat') }}"
-                            placeholder="Contoh : 590">
+                            placeholder="Contoh : 005/ATR">
+
+                        @error('kode_surat')
+
+                            <div class="invalid-feedback">
+
+                                {{ $message }}
+
+                            </div>
+
+                        @enderror
 
                     </div>
 
-                    {{-- Sifat Surat --}}
-                    <div class="col-md-6 mb-3">
+
+
+                    <div class="col-md-6">
 
                         <label class="form-label">
 
-                            Sifat Surat
+                            Perihal
+
+                            <span class="text-danger">*</span>
 
                         </label>
 
-                        <select
-                            name="is_priority"
-                            class="form-select">
+                        <input
+                            type="text"
+                            name="perihal"
+                            class="form-control @error('perihal') is-invalid @enderror"
+                            value="{{ old('perihal') }}"
+                            placeholder="Masukkan perihal surat">
 
-                            <option value="0">
+                        @error('perihal')
 
-                                Biasa
+                            <div class="invalid-feedback">
 
-                            </option>
+                                {{ $message }}
 
-                            <option value="1"
-                                {{ old('is_priority')=='1' ? 'selected' : '' }}>
+                            </div>
 
-                                Penting
-
-                            </option>
-
-                        </select>
+                        @enderror
 
                     </div>
+                                        {{-- =========================
+                        ISI / DESKRIPSI SURAT
+                    ========================== --}}
 
-                    {{-- Metode Pengiriman --}}
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-
-                            Metode Pengiriman
-
-                        </label>
-
-                        <select
-                            name="metode"
-                            class="form-select">
-
-                            <option value="">
-
-                                Pilih Metode
-
-                            </option>
-
-                            <option value="Email">
-
-                                Email
-
-                            </option>
-
-                            <option value="Kurir">
-
-                                Kurir
-
-                            </option>
-
-                            <option value="Pos">
-
-                                Pos
-
-                            </option>
-
-                            <option value="Langsung">
-
-                                Langsung
-
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                    {{-- Status --}}
-                    <div class="col-md-6 mb-3">
-
-    <label class="form-label">
-        Status Surat
-    </label>
-
-    <select
-        name="status"
-        class="form-select">
-
-        <option value="menunggu" selected>
-            Menunggu
-        </option>
-
-        <option value="diproses">
-            Diproses
-        </option>
-
-        <option value="ditinjau">
-            Ditinjau
-        </option>
-
-        <option value="selesai">
-            Selesai
-        </option>
-
-    </select>
-
-</div>
-
-                    {{-- Deskripsi --}}
-                    <div class="col-md-12 mb-4">
+                    <div class="col-12">
 
                         <label class="form-label">
 
                             Isi / Deskripsi Surat
 
-                            <span class="required">*</span>
-
                         </label>
 
                         <textarea
                             name="deskripsi"
-                            class="form-control"
-                            rows="6"
-                            placeholder="Tuliskan isi surat..."
-                            required>{{ old('deskripsi') }}</textarea>
+                            rows="8"
+                            class="form-control @error('deskripsi') is-invalid @enderror"
+                            placeholder="Tuliskan isi surat secara lengkap...">{{ old('deskripsi') }}</textarea>
+
+                        @error('deskripsi')
+
+                            <div class="invalid-feedback">
+
+                                {{ $message }}
+
+                            </div>
+
+                        @enderror
 
                     </div>
 
-                    <hr class="my-4">
 
-                    <h5 class="mb-4 text-primary">
 
-                        <i class="bi bi-person-lines-fill"></i>
+                    {{-- =========================
+                        LAMPIRAN
+                    ========================== --}}
 
-                        Tujuan Surat
-
-                    </h5>
-
-                    {{-- Kirim Kepada --}}
-                    <div class="col-md-12 mb-4">
+                    <div class="col-md-12">
 
                         <label class="form-label">
 
-                            Kirim Kepada Pegawai
-
-                            <span class="required">*</span>
-
-                        </label>
-
-                        <select
-                            name="pegawai_tujuan"
-                            id="pegawai_tujuan"
-                            class="form-select select-pegawai"
-                            required>
-
-                            <option value="">
-                                Pilih Pegawai Tujuan
-                            </option>
-
-                            @foreach($unitKerja as $unit)
-
-                                @if($unit->pegawai->count())
-
-                                    <optgroup label="📂 {{ $unit->nama }}">
-
-                                        @foreach($unit->pegawai->sortBy('nama') as $pegawai)
-
-                                            <option
-                                                value="{{ $pegawai->id }}"
-                                                data-unit="{{ $unit->nama }}"
-                                                data-jabatan="{{ $pegawai->jabatan->nama ?? '-' }}"
-                                                {{ old('pegawai_tujuan')==$pegawai->id ? 'selected' : '' }}>
-
-                                                {{ $pegawai->nama }}
-                                                — {{ $pegawai->jabatan->nama ?? '-' }}
-
-                                            </option>
-
-                                        @endforeach
-
-                                    </optgroup>
-
-                                @endif
-
-                            @endforeach
-
-                        </select>
-
-                        <small class="text-muted">
-
-                            Cari berdasarkan nama pegawai atau pilih berdasarkan unit kerja.
-
-                        </small>
-
-                    </div>
-
-                    {{-- Tembusan --}}
-                    <div class="col-md-12 mb-4">
-
-                        <label class="form-label">
-
-                            Tembusan
-
-                        </label>
-
-                        <select
-                            name="tembusan[]"
-                            class="form-select select-pegawai"
-                            multiple>
-
-                            @foreach($unitKerja as $unit)
-
-                                @if($unit->pegawai->count())
-
-                                    <optgroup label="📂 {{ $unit->nama }}">
-
-                                        @foreach($unit->pegawai->sortBy('nama') as $pegawai)
-
-                                            <option
-                                                value="{{ $pegawai->id }}">
-
-                                                {{ $pegawai->nama }}
-                                                — {{ $pegawai->jabatan->nama ?? '-' }}
-
-                                            </option>
-
-                                        @endforeach
-
-                                    </optgroup>
-
-                                @endif
-
-                            @endforeach
-
-                        </select>
-
-                        <small class="text-muted">
-
-                            Opsional. Pilih lebih dari satu pegawai sebagai tembusan.
-
-                        </small>
-
-                    </div>
-
-                    {{-- Catatan --}}
-                    <div class="col-md-12 mb-4">
-
-                        <label class="form-label">
-
-                            Catatan Tambahan
-
-                        </label>
-
-                        <textarea
-                            name="catatan_admin"
-                            rows="3"
-                            class="form-control"
-                            placeholder="Catatan untuk penerima surat...">{{ old('catatan_admin') }}</textarea>
-
-                    </div>
-
-                    {{-- Upload Dokumen --}}
-                    <div class="col-md-12 mb-4">
-
-                        <label class="form-label">
-
-                            Upload Dokumen Surat
+                            Lampiran Surat
 
                         </label>
 
                         <input
                             type="file"
-                            name="dokumen"
-                            id="dokumen"
-                            class="form-control"
-                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                            name="file_path"
+                            class="form-control @error('file_path') is-invalid @enderror">
 
                         <small class="text-muted">
 
@@ -615,118 +446,407 @@ textarea.form-control{
 
                         </small>
 
-                        <div
-                            id="preview-file"
-                            class="alert alert-info mt-3 d-none">
+                        @error('file_path')
 
-                        </div>
+                            <div class="invalid-feedback d-block">
 
-                    </div>
+                                {{ $message }}
 
-                                        <hr>
+                            </div>
 
-                    <div class="d-flex justify-content-end gap-2">
-
-                        <a href="{{ route('pegawai.surat.keluar') }}"
-                           class="btn btn-secondary">
-
-                            <i class="bi bi-arrow-left-circle"></i>
-
-                            Kembali
-
-                        </a>
-
-                        <button
-                            type="reset"
-                            class="btn btn-warning text-white">
-
-                            <i class="bi bi-arrow-counterclockwise"></i>
-
-                            Reset
-
-                        </button>
-
-                        <button
-                            type="submit"
-                            class="btn btn-primary">
-
-                            <i class="bi bi-send-fill"></i>
-
-                            Kirim Surat
-
-                        </button>
+                        @enderror
 
                     </div>
 
-                </form>
+                </div>
+
+            </div>
+
+
+            {{-- =========================
+                FOOTER BUTTON
+            ========================== --}}
+
+            <div class="card-footer-custom">
+
+                <a href="{{ route('pegawai.surat-keluar.index') }}"
+                   class="btn btn-light">
+
+                    <i class="bi bi-arrow-left-circle me-2"></i>
+
+                    Kembali
+
+                </a>
+
+
+                <div class="d-flex gap-2">
+
+                    {{-- Simpan Draft --}}
+                    <button
+                        type="submit"
+                        name="status"
+                        value="Draft"
+                        class="btn btn-warning">
+
+                        <i class="bi bi-save2-fill me-2"></i>
+
+                        Simpan Draft
+
+                    </button>
+
+
+                    {{-- Kirim Surat --}}
+                    <button
+                        type="submit"
+                        name="status"
+                        value="Menunggu"
+                        class="btn btn-primary">
+
+                        <i class="bi bi-send-fill me-2"></i>
+
+                        Kirim Surat
+
+                    </button>
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
+    </form>
+
+</div>
+
 
 @endsection
 
-@push('scripts')
+@push('styles')
 
-<script>
+<style>
 
-$(document).ready(function(){
+/* =====================================================
+   PAGE HEADER
+===================================================== */
 
-    $('.select-pegawai').select2({
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    margin-bottom:30px;
+    animation:fadeUp .45s ease;
+}
 
-        width:'100%',
+.page-header h2{
+    font-size:32px;
+    font-weight:700;
+    color:#0f172a;
+}
 
-        placeholder:'Cari nama pegawai atau jabatan...',
+.page-header p{
+    color:#64748b;
+    margin-bottom:0;
+}
 
-        allowClear:true,
+/* =====================================================
+   CARD
+===================================================== */
 
-        closeOnSelect:true
+.form-card{
+    background:#fff;
+    border-radius:22px;
+    overflow:hidden;
+    border:1px solid #e5e7eb;
+    box-shadow:0 15px 40px rgba(0,0,0,.05);
+    animation:fadeUp .5s ease;
+}
 
-    });
+.card-header-custom{
+    padding:25px 30px;
+    border-bottom:1px solid #edf2f7;
+    background:#ffffff;
+}
 
-    $('#dokumen').on('change',function(){
+.card-header-custom h4{
+    font-weight:700;
+    margin-bottom:4px;
+}
 
-        let file=this.files[0];
+.card-header-custom small{
+    color:#64748b;
+}
 
-        if(file){
+.card-body-custom{
+    padding:30px;
+}
 
-            $('#preview-file')
-                .removeClass('d-none')
-                .html(
+.card-footer-custom{
+    padding:22px 30px;
+    border-top:1px solid #edf2f7;
+    background:#fafafa;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
 
-                    '<i class="bi bi-file-earmark-text-fill text-primary"></i> '
+/* =====================================================
+   LABEL
+===================================================== */
 
-                    +'<strong>'+file.name+'</strong>'
+.form-label{
+    font-weight:600;
+    color:#334155;
+    margin-bottom:8px;
+}
 
-                    +'<br><small>Ukuran : '
+/* =====================================================
+   INPUT
+===================================================== */
 
-                    +(file.size/1024/1024).toFixed(2)
+.form-control,
+.form-select{
 
-                    +' MB</small>'
+    height:50px;
 
-                );
+    border-radius:14px;
 
-        }else{
+    border:1px solid #dbe2ea;
 
-            $('#preview-file')
+    transition:.25s;
 
-                .addClass('d-none')
+    box-shadow:none;
 
-                .html('');
+}
 
-        }
+textarea.form-control{
 
-    });
+    min-height:180px;
 
-});
+    resize:vertical;
 
-</script>
+    padding-top:15px;
+
+}
+
+.form-control:focus,
+.form-select:focus{
+
+    border-color:#2563EB;
+
+    box-shadow:0 0 0 4px rgba(37,99,235,.08);
+
+}
+
+.form-control[readonly]{
+
+    background:#f8fafc;
+
+}
+
+/* =====================================================
+   FILE
+===================================================== */
+
+input[type=file]{
+
+    padding:12px;
+
+}
+
+/* =====================================================
+   BUTTON
+===================================================== */
+
+.btn{
+
+    border-radius:14px;
+
+    padding:11px 22px;
+
+    font-weight:600;
+
+    transition:.25s;
+
+}
+
+.btn:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.btn-primary{
+
+    background:#2563EB;
+
+    border:none;
+
+}
+
+.btn-primary:hover{
+
+    background:#1d4ed8;
+
+}
+
+.btn-warning{
+
+    color:#fff;
+
+    border:none;
+
+    background:#f59e0b;
+
+}
+
+.btn-warning:hover{
+
+    background:#d97706;
+
+}
+
+.btn-light{
+
+    background:#fff;
+
+    border:1px solid #dbe2ea;
+
+}
+
+.btn-light:hover{
+
+    background:#f8fafc;
+
+}
+
+/* =====================================================
+   ALERT
+===================================================== */
+
+.alert{
+
+    border:none;
+
+    border-radius:16px;
+
+    padding:16px 20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.05);
+
+}
+
+/* =====================================================
+   INVALID
+===================================================== */
+
+.invalid-feedback{
+
+    display:block;
+
+}
+
+/* =====================================================
+   ROW SPACING
+===================================================== */
+
+.row.g-4>*{
+
+    margin-top:5px;
+
+}
+
+/* =====================================================
+   ANIMATION
+===================================================== */
+
+.fade-up{
+
+    animation:fadeUp .45s ease;
+
+}
+
+@keyframes fadeUp{
+
+from{
+
+opacity:0;
+transform:translateY(15px);
+
+}
+
+to{
+
+opacity:1;
+transform:translateY(0);
+
+}
+
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:992px){
+
+.card-footer-custom{
+
+flex-direction:column;
+gap:15px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.page-header{
+
+flex-direction:column;
+align-items:flex-start;
+
+}
+
+.card-header-custom,
+.card-body-custom,
+.card-footer-custom{
+
+padding:20px;
+
+}
+
+.page-header h2{
+
+font-size:26px;
+
+}
+
+}
+
+@media(max-width:576px){
+
+.btn{
+
+width:100%;
+
+}
+
+.card-footer-custom{
+
+align-items:stretch;
+
+}
+
+.card-footer-custom .d-flex{
+
+width:100%;
+flex-direction:column;
+
+}
+
+}
+
+</style>
 
 @endpush
-
-
-                
-
-                   
