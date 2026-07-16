@@ -6,9 +6,9 @@
 
 <div class="container-fluid">
 
-    {{-- =========================
-        HEADER
-    ========================== --}}
+    {{-- ===========================
+        PAGE HEADER
+    ============================ --}}
     <div class="page-header fade-up">
 
         <div>
@@ -21,9 +21,9 @@
 
             </h2>
 
-            <p class="text-muted mb-0">
+            <p>
 
-                Kelola seluruh surat keluar yang telah Anda buat.
+                Seluruh surat keluar yang telah Anda buat.
 
             </p>
 
@@ -41,9 +41,7 @@
     </div>
 
 
-    {{-- =========================
-        ALERT
-    ========================== --}}
+    {{-- ALERT --}}
     @if(session('success'))
 
         <div class="alert alert-success alert-dismissible fade show">
@@ -53,7 +51,6 @@
             {{ session('success') }}
 
             <button
-                type="button"
                 class="btn-close"
                 data-bs-dismiss="alert">
             </button>
@@ -64,10 +61,11 @@
 
 
 
-    {{-- =========================
-        STATISTIK
-    ========================== --}}
-    <div class="dashboard-grid mb-4">
+    {{-- ===========================
+        CARD STATISTIK
+    ============================ --}}
+
+    <div class="dashboard-grid">
 
         <div class="stat-card">
 
@@ -167,9 +165,10 @@
 
 
 
-    {{-- =========================
+    {{-- ===========================
         TABLE CARD
-    ========================== --}}
+    ============================ --}}
+
     <div class="table-card fade-up">
 
         <div class="table-header">
@@ -178,15 +177,15 @@
 
                 <h4>
 
-                    <i class="bi bi-list-ul me-2 text-primary"></i>
+                    <i class="bi bi-list-ul text-primary me-2"></i>
 
                     Daftar Surat Keluar
 
                 </h4>
 
-                <small class="text-muted">
+                <small>
 
-                    Seluruh surat keluar yang telah Anda buat.
+                    Data seluruh surat keluar pegawai.
 
                 </small>
 
@@ -202,15 +201,16 @@
 
 
 
-        {{-- =========================
+        {{-- ===========================
             SEARCH & FILTER
-        ========================== --}}
+        ============================ --}}
+
         <div class="table-toolbar">
 
             <form
                 action="{{ route('pegawai.surat-keluar.index') }}"
                 method="GET"
-                class="table-search">
+                class="search-form">
 
                 <i class="bi bi-search"></i>
 
@@ -226,7 +226,7 @@
             <form
                 action="{{ route('pegawai.surat-keluar.index') }}"
                 method="GET"
-                class="d-flex gap-2">
+                class="filter-form">
 
                 <input
                     type="hidden"
@@ -269,8 +269,7 @@
 
                 </select>
 
-                <button
-                    class="btn btn-primary">
+                <button class="btn btn-primary">
 
                     <i class="bi bi-funnel-fill"></i>
 
@@ -281,6 +280,7 @@
         </div>
 
 
+
         <div class="table-responsive">
 
             <table class="table align-middle">
@@ -289,19 +289,47 @@
 
                     <tr>
 
-                        <th width="60">No</th>
+                        <th width="60">
 
-                        <th>Nomor Surat</th>
+                            No
 
-                        <th>Perihal</th>
+                        </th>
 
-                        <th>Tujuan Surat</th>
+                        <th>
 
-                        <th width="130">Tanggal</th>
+                            Nomor Surat
 
-                        <th width="120">Status</th>
+                        </th>
 
-                        <th width="170">Aksi</th>
+                        <th>
+
+                            Perihal
+
+                        </th>
+
+                        <th>
+
+                            Tujuan Surat
+
+                        </th>
+
+                        <th width="130">
+
+                            Tanggal
+
+                        </th>
+
+                        <th width="120">
+
+                            Status
+
+                        </th>
+
+                        <th width="170">
+
+                            Aksi
+
+                        </th>
 
                     </tr>
 
@@ -311,11 +339,11 @@
 
                 @forelse($surat as $item)
 
-<tr>
+                <tr>
 
     <td>
 
-        {{ $surat->firstItem() + $loop->index }}
+        {{ $loop->iteration + ($surat->currentPage()-1) * $surat->perPage() }}
 
     </td>
 
@@ -349,7 +377,7 @@
 
     <td>
 
-        @if($item->status == 'Menunggu')
+        @if($item->status=='Menunggu')
 
             <span class="badge bg-warning text-dark">
 
@@ -357,15 +385,15 @@
 
             </span>
 
-        @elseif($item->status == 'Diproses')
+        @elseif($item->status=='Diproses')
 
-            <span class="badge bg-info text-white">
+            <span class="badge bg-info text-dark">
 
                 Diproses
 
             </span>
 
-        @elseif($item->status == 'Selesai')
+        @elseif($item->status=='Selesai')
 
             <span class="badge bg-success">
 
@@ -373,7 +401,7 @@
 
             </span>
 
-        @elseif($item->status == 'Ditolak')
+        @elseif($item->status=='Ditolak')
 
             <span class="badge bg-danger">
 
@@ -395,78 +423,134 @@
 
     <td>
 
-    <div class="d-flex justify-content-center gap-2">
+        <div class="btn-group-custom">
 
-        {{-- Detail --}}
-        <a href="{{ route('pegawai.surat-keluar.show',$item->id) }}"
-           class="btn btn-outline-primary btn-sm"
-           title="Detail">
+            {{-- DETAIL --}}
+            <a
+                href="{{ route('pegawai.surat-keluar.show',$item->id) }}"
+                class="btn btn-sm btn-outline-primary"
+                title="Detail">
 
-            <i class="bi bi-eye"></i>
+                <i class="bi bi-eye"></i>
 
-        </a>
+            </a>
 
-        {{-- Edit --}}
-        <a href="{{ route('pegawai.surat-keluar.edit',$item->id) }}"
-           class="btn btn-outline-warning btn-sm"
-           title="Edit">
+            {{-- EDIT --}}
+            <a
+                href="{{ route('pegawai.surat-keluar.edit',$item->id) }}"
+                class="btn btn-sm btn-outline-warning"
+                title="Edit">
 
-            <i class="bi bi-pencil-square"></i>
+                <i class="bi bi-pencil-square"></i>
 
-        </a>
+            </a>
 
-        {{-- Hapus --}}
-        <form action="{{ route('pegawai.surat-keluar.destroy',$item->id) }}"
-              method="POST"
-              class="d-inline"
-              onsubmit="return confirm('Yakin ingin menghapus surat ini?')">
+            {{-- HAPUS --}}
+            <form
+                action="{{ route('pegawai.surat-keluar.destroy',$item->id) }}"
+                method="POST"
+                class="d-inline"
+                onsubmit="return confirm('Yakin ingin menghapus surat ini?')">
 
-            @csrf
-            @method('DELETE')
+                @csrf
+                @method('DELETE')
 
-            <button type="submit"
-                    class="btn btn-outline-danger btn-sm"
+                <button
+                    type="submit"
+                    class="btn btn-sm btn-outline-danger"
                     title="Hapus">
 
-                <i class="bi bi-trash"></i>
+                    <i class="bi bi-trash"></i>
 
-            </button>
+                </button>
 
-        </form>
+            </form>
 
-    </div>
+        </div>
 
-</td>
+    </td>
+
+</tr>
+
+@empty
+
+<tr>
+
+    <td colspan="7">
+
+        <div class="empty-state">
+
+            <i class="bi bi-inbox"></i>
+
+            <h5>
+
+                Belum ada Surat Keluar
+
+            </h5>
+
+            <p>
+
+                Silakan klik tombol <strong>Tambah Surat</strong> untuk membuat surat baru.
+
+            </p>
+
+            <a
+                href="{{ route('pegawai.surat-keluar.create') }}"
+                class="btn btn-primary">
+
+                <i class="bi bi-plus-circle-fill me-2"></i>
+
+                Tambah Surat
+
+            </a>
+
+        </div>
+
+    </td>
 
 </tr>
 
 @endforelse
 
-</tbody>
+                </tbody>
 
-</table>
+            </table>
 
-</div>
+        </div>
+
         {{-- ===========================
             FOOTER TABLE
         ============================ --}}
+
         <div class="table-footer">
 
             <div>
 
                 Menampilkan
 
-                <strong>{{ $surat->firstItem() ?? 0 }}</strong>
+                <strong>
+
+                    {{ $surat->firstItem() ?? 0 }}
+
+                </strong>
 
                 -
 
-                <strong>{{ $surat->lastItem() ?? 0 }}</strong>
+                <strong>
+
+                    {{ $surat->lastItem() ?? 0 }}
+
+                </strong>
 
                 dari
 
-                <strong>{{ $surat->total() }}</strong>
+                <strong>
 
-                surat
+                    {{ $surat->total() }}
+
+                </strong>
+
+                data
 
             </div>
 
@@ -489,25 +573,35 @@
 
 <style>
 
-/* ============================================
-   PAGE HEADER
-============================================ */
+body{
+
+    background:#F8FAFC;
+
+}
+
+/* ===========================
+HEADER
+=========================== */
 
 .page-header{
 
     display:flex;
+
     justify-content:space-between;
+
     align-items:center;
+
     margin-bottom:30px;
+
     gap:20px;
 
 }
 
 .page-header h2{
 
-    font-size:30px;
     font-weight:700;
-    color:#0f172a;
+
+    margin-bottom:5px;
 
 }
 
@@ -515,18 +609,22 @@
 
     color:#64748b;
 
+    margin:0;
+
 }
 
-
-/* ============================================
-   DASHBOARD GRID
-============================================ */
+/* ===========================
+CARD STATISTIK
+=========================== */
 
 .dashboard-grid{
 
     display:grid;
+
     grid-template-columns:repeat(4,1fr);
-    gap:22px;
+
+    gap:20px;
+
     margin-bottom:30px;
 
 }
@@ -534,53 +632,67 @@
 .stat-card{
 
     background:#fff;
-    border-radius:22px;
-    padding:24px;
+
+    border-radius:18px;
+
+    padding:25px;
+
     display:flex;
+
     justify-content:space-between;
+
     align-items:center;
-    box-shadow:0 12px 30px rgba(15,23,42,.05);
-    border:1px solid #edf2f7;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.05);
+
     transition:.3s;
 
 }
 
 .stat-card:hover{
 
-    transform:translateY(-5px);
+    transform:translateY(-6px);
 
 }
 
 .stat-card span{
 
     color:#64748b;
-    font-size:14px;
 
 }
 
 .stat-card h3{
 
-    font-size:34px;
+    font-size:32px;
+
     font-weight:700;
-    margin-top:6px;
+
+    margin-top:8px;
 
 }
 
 .stat-icon{
 
-    width:65px;
-    height:65px;
-    border-radius:18px;
+    width:60px;
+
+    height:60px;
+
+    border-radius:16px;
+
     display:flex;
-    justify-content:center;
+
     align-items:center;
-    font-size:28px;
+
+    justify-content:center;
+
+    font-size:24px;
 
 }
 
 .primary{
 
     background:#DBEAFE;
+
     color:#2563EB;
 
 }
@@ -588,13 +700,15 @@
 .warning{
 
     background:#FEF3C7;
+
     color:#D97706;
 
 }
 
 .info{
 
-    background:#E0F2FE;
+    background:#DBEAFE;
+
     color:#0284C7;
 
 }
@@ -602,74 +716,100 @@
 .success{
 
     background:#DCFCE7;
+
     color:#16A34A;
 
 }
 
-
-/* ============================================
-   TABLE CARD
-============================================ */
+/* ===========================
+TABLE CARD
+=========================== */
 
 .table-card{
 
     background:#fff;
-    border-radius:22px;
+
+    border-radius:18px;
+
     overflow:hidden;
-    border:1px solid #e5e7eb;
-    box-shadow:0 10px 30px rgba(0,0,0,.05);
+
+    box-shadow:0 10px 35px rgba(0,0,0,.05);
 
 }
 
 .table-header{
 
+    padding:25px 30px;
+
     display:flex;
+
     justify-content:space-between;
+
     align-items:center;
-    padding:24px 30px;
+
     border-bottom:1px solid #edf2f7;
 
 }
 
 .table-toolbar{
 
-    padding:20px 30px;
     display:flex;
+
     justify-content:space-between;
+
     gap:20px;
+
+    padding:25px 30px;
+
     flex-wrap:wrap;
 
 }
 
-.table-search{
+.search-form{
 
     position:relative;
+
     flex:1;
 
 }
 
-.table-search i{
+.search-form i{
 
     position:absolute;
+
     left:15px;
+
     top:50%;
+
     transform:translateY(-50%);
+
     color:#94A3B8;
 
 }
 
-.table-search input{
+.search-form input{
 
     width:100%;
-    padding:12px 16px 12px 46px;
-    border-radius:14px;
+
+    padding:12px 15px 12px 45px;
+
+    border-radius:12px;
+
     border:1px solid #dbe2ea;
+
+}
+
+.filter-form{
+
+    display:flex;
+
+    gap:10px;
 
 }
 
 .table{
 
-    margin-bottom:0;
+    margin:0;
 
 }
 
@@ -679,9 +819,11 @@
 
 }
 
-.table thead th{
+.table th{
 
     font-weight:700;
+
+    border:none;
 
 }
 
@@ -697,80 +839,75 @@
 
 }
 
+/* ===========================
+BUTTON AKSI
+=========================== */
 
-/* ============================================
-   BUTTON GROUP
-============================================ */
-
-.btn-group{
+.btn-group-custom{
 
     display:flex;
-    gap:6px;
+
+    gap:8px;
+
+    justify-content:center;
 
 }
 
-.btn-group .btn{
+.btn-group-custom .btn{
 
     width:38px;
+
     height:38px;
+
     display:flex;
+
     justify-content:center;
+
     align-items:center;
+
     border-radius:10px;
 
 }
 
+/* ===========================
+EMPTY
+=========================== */
 
-/* ============================================
-   EMPTY STATE
-============================================ */
+.empty-state{
 
-.table-empty{
-
-    padding:60px 20px;
     text-align:center;
 
-}
-
-.table-empty i{
-
-    font-size:60px;
+    padding:60px 20px;
 
 }
 
+.empty-state i{
 
-/* ============================================
-   FOOTER
-============================================ */
+    font-size:70px;
+
+    color:#CBD5E1;
+
+}
+
+.empty-state h5{
+
+    margin-top:20px;
+
+}
 
 .table-footer{
 
     display:flex;
+
     justify-content:space-between;
+
     align-items:center;
-    padding:22px 30px;
+
+    padding:20px 30px;
+
     border-top:1px solid #edf2f7;
-    background:#fafafa;
 
 }
-
-.pagination{
-
-    margin-bottom:0;
-
-}
-
-.page-link{
-
-    border-radius:10px!important;
-    margin:0 2px;
-
-}
-
-
-/* ============================================
-   ANIMATION
-============================================ */
 
 .fade-up{
 
@@ -780,26 +917,23 @@
 
 @keyframes fadeUp{
 
-    from{
+from{
 
-        opacity:0;
-        transform:translateY(20px);
+opacity:0;
 
-    }
-
-    to{
-
-        opacity:1;
-        transform:translateY(0);
-
-    }
+transform:translateY(15px);
 
 }
 
+to{
 
-/* ============================================
-   RESPONSIVE
-============================================ */
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
 
 @media(max-width:992px){
 
@@ -816,6 +950,7 @@ grid-template-columns:repeat(2,1fr);
 .page-header{
 
 flex-direction:column;
+
 align-items:flex-start;
 
 }
@@ -829,8 +964,8 @@ flex-direction:column;
 .table-footer{
 
 flex-direction:column;
+
 gap:15px;
-text-align:center;
 
 }
 
@@ -849,4 +984,3 @@ grid-template-columns:1fr;
 </style>
 
 @endpush
-
