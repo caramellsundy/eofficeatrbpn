@@ -24,8 +24,16 @@ class AdminSuratMasukController extends Controller
         ->where('status','menunggu')
         ->count();
 
-    $proses = (clone $query)
-        ->where('status','proses')
+    $disetujui = (clone $query)
+        ->where('status','disetujui')
+        ->count();
+
+    $ditolak = (clone $query)
+        ->where('status','ditolak')
+        ->count();
+
+    $diproses = (clone $query)
+        ->where('status','diproses')
         ->count();
 
     $selesai = (clone $query)
@@ -40,7 +48,9 @@ class AdminSuratMasukController extends Controller
         'surat',
         'totalSurat',
         'menunggu',
-        'proses',
+        'disetujui',
+        'ditolak',
+        'diproses',
         'selesai'
     ));
 }
@@ -208,6 +218,86 @@ class AdminSuratMasukController extends Controller
         ->route('admin.surat.masuk.index')
         ->with('success', 'Surat berhasil diperbarui.');
 }
+
+    /**
+     * Setujui surat (lolos verifikasi)
+     */
+    public function setujui(Request $request, $id)
+    {
+        $request->validate([
+            'catatan_admin' => 'nullable|string|max:1000',
+        ]);
+
+        $surat = Surat::findOrFail($id);
+
+        if ($surat->status !== 'menunggu') {
+            return back()->with('error', 'Hanya surat yang masih menunggu yang dapat diverifikasi.');
+        }
+
+        $surat->update([
+            'status'        => 'disetujui',
+            'catatan_admin' => $request->catatan_admin,
+        ]);
+
+        LogAktivitas::create([
+            'user_id'     => auth()->id(),
+            'surat_id'    => $surat->id,
+            'action'      => 'Verifikasi',
+            'description' => 'Surat ' . $surat->nomor_surat . ' disetujui oleh Admin.',
+        ]);
+
+        if ($surat->user_id) {
+            LogAktivitas::create([
+                'user_id'     => $surat->user_id,
+                'surat_id'    => $surat->id,
+                'action'      => 'Disetujui',
+                'description' => 'Surat Anda telah disetujui.' . ($surat->catatan_admin ? ' Catatan: ' . $surat->catatan_admin : ''),
+            ]);
+        }
+
+        return back()->with('success', 'Surat berhasil disetujui.');
+    }
+
+    /**
+     * Tolak surat (gagal verifikasi)
+     */
+    public function tolak(Request $request, $id)
+    {
+        $request->validate([
+            'catatan_admin' => 'required|string|max:1000',
+        ], [
+            'catatan_admin.required' => 'Catatan penolakan wajib diisi.',
+        ]);
+
+        $surat = Surat::findOrFail($id);
+
+        if ($surat->status !== 'menunggu') {
+            return back()->with('error', 'Hanya surat yang masih menunggu yang dapat diverifikasi.');
+        }
+
+        $surat->update([
+            'status'        => 'ditolak',
+            'catatan_admin' => $request->catatan_admin,
+        ]);
+
+        LogAktivitas::create([
+            'user_id'     => auth()->id(),
+            'surat_id'    => $surat->id,
+            'action'      => 'Verifikasi',
+            'description' => 'Surat ' . $surat->nomor_surat . ' ditolak oleh Admin.',
+        ]);
+
+        if ($surat->user_id) {
+            LogAktivitas::create([
+                'user_id'     => $surat->user_id,
+                'surat_id'    => $surat->id,
+                'action'      => 'Ditolak',
+                'description' => 'Surat Anda ditolak. Catatan: ' . $surat->catatan_admin,
+            ]);
+        }
+
+        return back()->with('success', 'Surat berhasil ditolak.');
+    }
 
     /**
      * Hapus

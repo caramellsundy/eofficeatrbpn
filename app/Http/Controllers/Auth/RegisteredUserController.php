@@ -62,6 +62,6 @@ class RegisteredUserController extends Controller
             return redirect()->route('pegawai.dashboard');
         }
 
-        return redirect()->route('dashboard.umum');
+        return redirect()->route('umum.dashboard');
     }
 }

@@ -53,7 +53,7 @@ class DashboardController extends Controller
         */
 
 
-        // surat masuk dari disposisi
+        // surat masuk dari disposisi (total tugas disposisi)
         $suratMasuk = Surat::whereHas(
             'disposisiTujuans',
             function($q) use($pegawai){
@@ -65,6 +65,16 @@ class DashboardController extends Controller
 
             }
         )
+        ->count();
+
+
+
+        // disposisi yang belum selesai (tugas aktif pegawai)
+        $disposisiAktif = DisposisiTujuan::where(
+            'pegawai_id',
+            $pegawai->id
+        )
+        ->whereIn('status', ['Belum Dibaca', 'Sudah Dibaca'])
         ->count();
 
 
@@ -125,15 +135,11 @@ class DashboardController extends Controller
 
 
 
-        $prioritasTinggi = DisposisiTujuan::where(
-            'pegawai_id',
-            $pegawai->id
-        )
-        ->where(
-            'status',
-            'Tinggi'
-        )
-        ->count();
+        $prioritasTinggi = DisposisiTujuan::where('pegawai_id', $pegawai->id)
+            ->whereHas('disposisi', function ($query) {
+                $query->where('prioritas', 'Tinggi');
+            })
+            ->count();
 
 
 
@@ -220,7 +226,7 @@ class DashboardController extends Controller
 
                 'judul'=>'Menerima Disposisi',
 
-                'keterangan'=>$item->catatan
+                'keterangan'=>$item->disposisi->catatan ?? '-'
 
             ]);
 
@@ -245,6 +251,8 @@ class DashboardController extends Controller
                 'suratKeluar',
 
                 'disposisi',
+
+                'disposisiAktif',
 
                 'menunggu',
 

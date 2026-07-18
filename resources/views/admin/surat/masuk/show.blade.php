@@ -208,65 +208,75 @@
                 <div class="detail-value">
 
                     @switch(strtolower($surat->status))
-
+ 
                         @case('menunggu')
-
+ 
                             <span class="badge bg-warning text-dark">
-
+ 
                                 <i class="bi bi-hourglass-split me-1"></i>
-
+ 
                                 Menunggu
-
+ 
                             </span>
-
+ 
                         @break
-
-                        @case('proses')
-
-                        @case('diproses')
-
-                            <span class="badge bg-info">
-
-                                <i class="bi bi-arrow-repeat me-1"></i>
-
-                                Diproses
-
-                            </span>
-
-                        @break
-
-                        @case('selesai')
-
+ 
+                        @case('disetujui')
+ 
                             <span class="badge bg-success">
-
+ 
                                 <i class="bi bi-check-circle-fill me-1"></i>
-
-                                Selesai
-
+ 
+                                Disetujui
+ 
                             </span>
-
+ 
                         @break
-
+ 
                         @case('ditolak')
-
+ 
                             <span class="badge bg-danger">
-
+ 
                                 <i class="bi bi-x-circle-fill me-1"></i>
-
+ 
                                 Ditolak
-
+ 
                             </span>
-
+ 
                         @break
-
-                        @default
-
-                            <span class="badge bg-secondary">
-
-                                {{ ucfirst($surat->status) }}
-
+ 
+                        @case('diproses')
+ 
+                            <span class="badge bg-info">
+ 
+                                <i class="bi bi-arrow-repeat me-1"></i>
+ 
+                                Diproses
+ 
                             </span>
-
+ 
+                        @break
+ 
+                        @case('selesai')
+ 
+                            <span class="badge bg-primary">
+ 
+                                <i class="bi bi-flag-fill me-1"></i>
+ 
+                                Selesai
+ 
+                            </span>
+ 
+                        @break
+ 
+                        @default
+ 
+                            <span class="badge bg-secondary">
+ 
+                                {{ ucfirst($surat->status) }}
+ 
+                            </span>
+ 
                     @endswitch
 
                 </div>
@@ -411,11 +421,135 @@
                 </div>
 
             </div>
-
+ 
+            {{-- =========================================== --}}
+            {{-- CATATAN ADMIN --}}
+            {{-- =========================================== --}}
+ 
+            <div class="col-12 mb-4">
+                <label class="detail-label">
+                    Catatan Verifikasi
+                </label>
+                <div class="detail-value detail-description">
+                    {{ $surat->catatan_admin ?: 'Belum ada catatan verifikasi.' }}
+                </div>
+            </div>
+ 
         </div>
-
+ 
     </div>
-
+ 
+    {{-- =========================================== --}}
+    {{-- PANEL VERIFIKASI --}}
+    {{-- =========================================== --}}
+ 
+    @if($surat->status == 'menunggu')
+ 
+        <div class="verify-panel fade-up">
+ 
+            <div class="verify-header">
+ 
+                <h4>
+ 
+                    <i class="bi bi-clipboard-check text-primary me-2"></i>
+ 
+                    Verifikasi Surat
+ 
+                </h4>
+ 
+                <p class="text-muted mb-0">
+ 
+                    Setujui untuk meneruskan ke tahap disposisi,
+                    atau tolak jika surat tidak memenuhi syarat.
+ 
+                </p>
+ 
+            </div>
+ 
+            <form
+                action="{{ route('admin.surat.masuk.setujui',$surat->id) }}"
+                method="POST"
+                class="verify-form">
+ 
+                @csrf
+ 
+                <div class="mb-3">
+ 
+                    <label class="form-label fw-semibold">
+ 
+                        Catatan (opsional)
+ 
+                    </label>
+ 
+                    <textarea
+                        name="catatan_admin"
+                        rows="3"
+                        class="form-control"
+                        placeholder="Tambahkan catatan verifikasi...">{{ old('catatan_admin') }}</textarea>
+ 
+                </div>
+ 
+                <div class="d-flex gap-2">
+ 
+                    <button
+                        type="submit"
+                        class="btn btn-success px-4">
+ 
+                        <i class="bi bi-check-circle-fill me-2"></i>
+ 
+                        Setujui Surat
+ 
+                    </button>
+ 
+                </div>
+ 
+            </form>
+ 
+            <form
+                action="{{ route('admin.surat.masuk.tolak',$surat->id) }}"
+                method="POST"
+                class="verify-form mt-3">
+ 
+                @csrf
+ 
+                <div class="mb-3">
+ 
+                    <label class="form-label fw-semibold">
+ 
+                        Alasan Penolakan
+                        <span class="text-danger">*</span>
+ 
+                    </label>
+ 
+                    <textarea
+                        name="catatan_admin"
+                        rows="3"
+                        class="form-control"
+                        placeholder="Jelaskan alasan penolakan...">{{ old('catatan_admin') }}</textarea>
+ 
+                </div>
+ 
+                <div class="d-flex gap-2">
+ 
+                    <button
+                        type="submit"
+                        class="btn btn-outline-danger px-4"
+                        onclick="return confirm('Yakin menolak surat ini?')">
+ 
+                        <i class="bi bi-x-circle-fill me-2"></i>
+ 
+                        Tolak Surat
+ 
+                    </button>
+ 
+                </div>
+ 
+            </form>
+ 
+        </div>
+ 
+    @endif
+ 
     <div class="detail-footer">
 
         <a
@@ -576,13 +710,57 @@
 
 }
 
-.detail-footer .btn{
-
-    min-width:170px;
-
-    border-radius:12px;
-
-}
+ .detail-footer .btn{
+ 
+     min-width:170px;
+ 
+     border-radius:12px;
+ 
+ }
+ 
+ .verify-panel{
+ 
+     background:#f8fafc;
+ 
+     border:1px solid #e2e8f0;
+ 
+     border-radius:20px;
+ 
+     padding:28px 30px;
+ 
+     margin-bottom:24px;
+ 
+ }
+ 
+ .verify-header{
+ 
+     margin-bottom:20px;
+ 
+ }
+ 
+ .verify-header h4{
+ 
+     font-weight:700;
+ 
+     color:#1e293b;
+ 
+     margin-bottom:6px;
+ 
+ }
+ 
+ .verify-form label{
+ 
+     color:#334155;
+ 
+ }
+ 
+ .verify-form .form-control{
+ 
+     border-radius:12px;
+ 
+     border:1px solid #d9dee5;
+ 
+ }
 
 .badge{
 

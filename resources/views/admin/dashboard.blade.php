@@ -214,6 +214,43 @@ DISPOSISI
 
 
 
+{{-- ================= ANTREAN VERIFIKASI ================= --}}
+
+@if($menunggu > 0)
+
+<div class="alert alert-warning border-0 shadow-sm rounded-4 d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+
+    <div>
+
+        <h5 class="fw-bold mb-1">
+
+            <i class="bi bi-hourglass-split me-2"></i>
+
+            {{ $menunggu }} Surat Menunggu Verifikasi
+
+        </h5>
+
+        <small class="text-muted">
+
+            Segera verifikasi surat masuk sebelum dapat didisposisikan.
+
+        </small>
+
+    </div>
+
+    <a href="{{ route('admin.surat.masuk.index') }}" class="btn btn-warning text-white rounded-pill px-4">
+
+        <i class="bi bi-clipboard-check me-2"></i>
+
+        Verifikasi Sekarang
+
+    </a>
+
+</div>
+
+@endif
+
+
 {{-- ================= GRAFIK + AKTIVITAS ================= --}}
 
 
@@ -531,28 +568,40 @@ Status Surat
 
 
 
-<div class="card-body">
-
-
-<p>
-Menunggu :
-<b>{{ $menunggu }}</b>
-</p>
-
-
-<p>
-Diproses :
-<b>{{ $diproses }}</b>
-</p>
-
-
-<p>
-Selesai :
-<b>{{ $selesai }}</b>
-</p>
-
-
-</div>
+ <div class="card-body">
+ 
+ 
+ <p>
+ Menunggu Verifikasi :
+ <b>{{ $menunggu }}</b>
+ </p>
+ 
+ 
+ <p>
+ Disetujui :
+ <b>{{ $disetujui }}</b>
+ </p>
+ 
+ 
+ <p>
+ Ditolak :
+ <b>{{ $ditolak }}</b>
+ </p>
+ 
+ 
+ <p>
+ Diproses :
+ <b>{{ $diproses }}</b>
+ </p>
+ 
+ 
+ <p>
+ Selesai :
+ <b>{{ $selesai }}</b>
+ </p>
+ 
+ 
+ </div>
 
 
 </div>

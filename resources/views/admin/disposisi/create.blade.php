@@ -133,15 +133,21 @@
                         </select>
 
                         @error('surat_id')
-
+ 
                             <div class="invalid-feedback">
-
+ 
                                 {{ $message }}
-
+ 
                             </div>
-
+ 
                         @enderror
-
+ 
+                        <small class="text-muted">
+ 
+                            Hanya surat yang telah disetujui yang dapat dipilih.
+ 
+                        </small>
+ 
                     </div>
 
                     {{-- Tujuan Disposisi --}}

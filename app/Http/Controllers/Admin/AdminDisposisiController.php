@@ -56,7 +56,9 @@ class AdminDisposisiController extends Controller
      */
     public function create()
     {
-        $surat = Surat::orderByDesc('tanggal_surat')
+        $surat = Surat::where('jenis_surat', 'masuk')
+                    ->where('status', 'disetujui')
+                    ->orderByDesc('tanggal_surat')
                     ->get();
 
         $pegawai = Pegawai::orderBy('nama')
@@ -91,6 +93,15 @@ class AdminDisposisiController extends Controller
             'catatan.required'           => 'Catatan disposisi wajib diisi.',
             'tanggal_disposisi.required' => 'Tanggal disposisi wajib diisi.',
         ]);
+
+        // Hanya surat yang sudah disetujui yang boleh didisposisikan
+        $suratDisposisi = Surat::findOrFail($request->surat_id);
+
+        if ($suratDisposisi->status !== 'disetujui') {
+            return back()
+                ->withInput()
+                ->with('error', 'Hanya surat yang telah disetujui yang dapat didisposisikan.');
+        }
 
         DB::beginTransaction();
 
@@ -179,7 +190,9 @@ class AdminDisposisiController extends Controller
             'tujuans'
         ])->findOrFail($id);
 
-        $surat = Surat::orderByDesc('tanggal_surat')
+        $surat = Surat::where('jenis_surat', 'masuk')
+                    ->where('status', 'disetujui')
+                    ->orderByDesc('tanggal_surat')
                     ->get();
 
         $pegawai = Pegawai::orderBy('nama')

@@ -1,6 +1,6 @@
 @extends('layouts.pegawai')
 
-@section('title','Tambah Surat Keluar')
+@section('title','Tambah Surat Masuk')
 
 @section('content')
 
@@ -17,19 +17,19 @@
 
                 <i class="bi bi-send-plus-fill text-primary me-2"></i>
 
-                Tambah Surat Keluar
+                Tambah Surat Masuk
 
             </h2>
 
             <p class="text-muted mb-0">
 
-                Buat surat keluar baru kemudian kirim kepada pimpinan yang dituju.
+                Catat surat masuk baru untuk diproses sesuai tujuan surat.
 
             </p>
 
         </div>
 
-        <a href="{{ route('pegawai.surat-keluar.index') }}"
+        <a href="{{ route('pegawai.surat-masuk.index') }}"
            class="btn btn-outline-secondary">
 
             <i class="bi bi-arrow-left me-2"></i>
@@ -76,7 +76,7 @@
     ============================ --}}
     <div class="form-card fade-up">
 
-        <form action="{{ route('pegawai.surat-keluar.store') }}"
+        <form action="{{ route('pegawai.surat-masuk.store') }}"
               method="POST"
               enctype="multipart/form-data">
 
@@ -143,21 +143,36 @@
                 </div>
 
 
-                {{-- Tujuan Surat --}}
+                {{-- Asal Surat --}}
                 <div class="col-md-6">
 
                     <label class="form-label fw-semibold">
 
-                        Tujuan Surat
+                        Asal Surat
 
                     </label>
+
+                    <input
+                        type="text"
+                        name="asal_surat"
+                        class="form-control"
+                        value="{{ old('asal_surat') }}"
+                        placeholder="Contoh: Kantor Pertanahan Kota"
+                        required>
+
+                </div>
+
+                {{-- Tujuan Surat --}}
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">Tujuan Surat</label>
 
                     <input
                         type="text"
                         name="tujuan_surat"
                         class="form-control"
                         value="{{ old('tujuan_surat') }}"
-                        placeholder="Contoh : Kepala Kantor ATR/BPN"
+                        placeholder="Contoh: Kepala Kantor ATR/BPN"
                         required>
 
                 </div>
@@ -218,8 +233,7 @@
                         name="nama_pimpinan"
                         class="form-control"
                         value="{{ old('nama_pimpinan') }}"
-                        placeholder="Nama pimpinan akan muncul otomatis"
-                        readonly>
+                        placeholder="Masukkan nama pimpinan">
 
                 </div>
 
@@ -342,7 +356,7 @@
 
                 Setelah surat disimpan, status akan menjadi
                 <strong>Menunggu</strong>.
-                Surat dapat diedit sebelum dikirim ke pimpinan.
+                Surat dapat diedit sebelum diproses.
 
             </div>
 
@@ -351,158 +365,7 @@
             ============================ --}}
             <div class="d-flex justify-content-between mt-4">
 
-                <a href="{{ route('pegawai.surat-keluar.index') }}"
-                   class="btn btn-outline-secondary">
-
-                    <i class="bi bi-arrow-left me-2"></i>
-
-                    Kembali
-
-                </a>
-
-                <div class="d-flex gap-2">
-
-                    <button
-                        type="reset"
-                        class="btn btn-warning">
-
-                        <i class="bi bi-arrow-clockwise me-2"></i>
-
-                        Reset
-
-                    </button>
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary">
-
-                        <i class="bi bi-save-fill me-2"></i>
-
-                        Simpan Surat
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </form>
-
-    </div>
-
-</div>
-
-@endsection
-
-
-@push('scripts')
-
-<script>
-
-document.addEventListener('DOMContentLoaded',function(){
-
-    const jabatan =
-        document.getElementById('jabatan_pimpinan');
-
-    const pimpinan =
-        document.getElementById('nama_pimpinan');
-
-    function isiPimpinan(){
-
-        let selected =
-            jabatan.options[jabatan.selectedIndex];
-
-        pimpinan.value =
-            selected.dataset.nama ?? '';
-
-    }
-
-    isiPimpinan();
-
-    jabatan.addEventListener(
-        'change',
-        isiPimpinan
-    );
-
-});
-
-</script>
-
-@endpush
-
-
-@push('styles')
-
-<style>
-
-.form-card{
-
-    background:#fff;
-
-    border-radius:22px;
-
-    padding:35px;
-
-    box-shadow:0 10px 30px rgba(0,0,0,.05);
-
-    border:1px solid #edf2f7;
-
-}
-
-.form-label{
-
-    margin-bottom:8px;
-
-    color:#334155;
-
-}
-
-.form-control,
-.form-select{
-
-    border-radius:12px;
-
-    border:1px solid #dbe2ea;
-
-    padding:12px 15px;
-
-}
-
-.form-control:focus,
-.form-select:focus{
-
-    border-color:#2563EB;
-
-    box-shadow:0 0 0 .2rem rgba(37,99,235,.15);
-
-}
-
-.btn{
-
-    border-radius:12px;
-
-    padding:10px 22px;
-
-    font-weight:600;
-
-}
-
-.alert{
-
-    border-radius:14px;
-
-}
-
-</style>
-
-@endpush
-
-            {{-- ===========================
-                BUTTON
-            ============================ --}}
-            <div class="d-flex justify-content-between mt-4">
-
-                <a href="{{ route('pegawai.surat-keluar.index') }}"
+                <a href="{{ route('pegawai.surat-masuk.index') }}"
                    class="btn btn-outline-secondary">
 
                     <i class="bi bi-arrow-left me-2"></i>

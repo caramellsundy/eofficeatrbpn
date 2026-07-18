@@ -101,6 +101,10 @@ class DashboardController extends Controller
 
         $menunggu = Surat::where('status', 'menunggu')->count();
 
+        $disetujui = Surat::where('status', 'disetujui')->count();
+
+        $ditolak = Surat::where('status', 'ditolak')->count();
+
         $diproses = Surat::where('status', 'diproses')->count();
 
         $selesai = Surat::where('status', 'selesai')->count();
@@ -129,6 +133,8 @@ class DashboardController extends Controller
             'suratTerbaru',
 
             'menunggu',
+            'disetujui',
+            'ditolak',
             'diproses',
             'selesai'
 

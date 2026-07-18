@@ -86,13 +86,13 @@
 
                             <h3 class="fw-bold text-primary mb-0">
 
-                                {{ $suratMasuk }}
+                                {{ $disposisiAktif }}
 
                             </h3>
 
                             <small class="text-muted">
 
-                                Surat Masuk
+                                Tugas Disposisi
 
                             </small>
 
@@ -132,7 +132,7 @@
 
     <div class="row g-4 mb-5">
 
-        {{-- Surat Masuk --}}
+        {{-- Tugas Disposisi (aktif) --}}
 
         <div class="col-lg-3 col-md-6">
 
@@ -146,13 +146,13 @@
 
                             <div class="text-muted">
 
-                                Surat Masuk
+                                Tugas Disposisi
 
                             </div>
 
                             <h2 class="fw-bold mt-3">
 
-                                {{ $suratMasuk }}
+                                {{ $disposisiAktif }}
 
                             </h2>
 
@@ -160,7 +160,7 @@
 
                         <div class="stat-icon bg-primary">
 
-                            <i class="bi bi-envelope-fill"></i>
+                            <i class="bi bi-send-check-fill"></i>
 
                         </div>
 
@@ -327,6 +327,29 @@
             </div>
 
             <div class="card-body">
+
+                @if($disposisiAktif > 0)
+
+                    <a href="{{ route('pegawai.disposisi.index') }}"
+                       class="btn btn-primary w-100 rounded-3 mb-3 py-3 d-flex justify-content-between align-items-center">
+
+                        <span>
+
+                            <i class="bi bi-send-check-fill me-2"></i>
+
+                            Kerjakan Disposisi Anda
+
+                        </span>
+
+                        <span class="badge bg-white text-primary rounded-pill px-3">
+
+                            {{ $disposisiAktif }}
+
+                        </span>
+
+                    </a>
+
+                @endif
 
                 <div class="list-group list-group-flush">
 

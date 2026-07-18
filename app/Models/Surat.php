@@ -118,13 +118,15 @@ public function disposisiTujuans()
     {
         return match ($this->status) {
 
-            'menunggu' => 'warning',
+            'menunggu'  => 'warning',
 
-            'diproses' => 'info',
+            'disetujui' => 'success',
 
-            'selesai' => 'success',
+            'diproses'  => 'info',
 
-            'ditolak' => 'danger',
+            'selesai'   => 'primary',
+
+            'ditolak'   => 'danger',
 
             default => 'secondary',
         };

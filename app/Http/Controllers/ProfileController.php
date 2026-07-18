@@ -6,7 +6,11 @@ use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -18,6 +22,11 @@ class ProfileController extends Controller
     {
         return view('profile.edit', [
             'user' => $request->user(),
+            'layout' => match ($request->user()->role) {
+                'pegawai' => 'layouts.pegawai',
+                'umum' => 'layouts.umum',
+                default => 'layouts.admin',
+            },
         ]);
     }
 
@@ -26,15 +35,51 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $validated = $request->validated();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
+        DB::transaction(function () use ($user, $validated) {
+            $pegawai = $user->pegawai;
 
-        $request->user()->save();
+            if ($pegawai) {
+                validator($validated, [
+                    'email' => [
+                        'required',
+                        Rule::unique('pegawai', 'email')->ignore($pegawai->id),
+                    ],
+                ])->validate();
+
+                $pegawai->update([
+                    'nama' => $validated['name'],
+                    'email' => $validated['email'],
+                ]);
+            }
+
+            $user->fill($validated);
+
+            if ($user->isDirty('email')) {
+                $user->email_verified_at = null;
+            }
+
+            $user->save();
+        });
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    /** Update the authenticated user's password. */
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $validated = $request->validateWithBag('updatePassword', [
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', Password::defaults(), 'confirmed'],
+        ]);
+
+        $request->user()->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return Redirect::route('profile.edit')->with('status', 'password-updated');
     }
 
     /**

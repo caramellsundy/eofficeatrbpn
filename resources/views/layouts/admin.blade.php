@@ -240,6 +240,12 @@
 
                 </span>
 
+                @if(($__mn = \App\Models\Surat::where('jenis_surat','masuk')->where('status','menunggu')->count()) > 0)
+
+                    <span class="menu-badge bg-warning text-dark">{{ $__mn }}</span>
+
+                @endif
+
             </a>
 
             <a

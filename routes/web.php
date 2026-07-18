@@ -238,6 +238,25 @@ Route::middleware(['auth','role:admin'])
     ->names('surat.masuk');
 
 
+    Route::prefix('surat-masuk')
+    ->name('surat.masuk.')
+    ->group(function () {
+
+        Route::post(
+            '{id}/setujui',
+            [AdminSuratMasukController::class, 'setujui']
+        )
+        ->name('setujui');
+
+        Route::post(
+            '{id}/tolak',
+            [AdminSuratMasukController::class, 'tolak']
+        )
+        ->name('tolak');
+
+    });
+
+
 
     Route::resource(
         'surat-keluar',
@@ -344,6 +363,18 @@ Route::middleware(['auth','role:pegawai'])
         [PegawaiDisposisiController::class,'index']
     )
     ->name('disposisi.index');
+
+    Route::get('/disposisi/{id}', [PegawaiDisposisiController::class, 'show'])
+        ->name('disposisi.show');
+
+    Route::get('/disposisi/{id}/cetak', [PegawaiDisposisiController::class, 'cetak'])
+        ->name('disposisi.cetak');
+
+    Route::patch('/disposisi/{id}/dibaca', [PegawaiDisposisiController::class, 'dibaca'])
+        ->name('disposisi.dibaca');
+
+    Route::patch('/disposisi/{id}/selesai', [PegawaiDisposisiController::class, 'selesai'])
+        ->name('disposisi.selesai');
 
 
 });
