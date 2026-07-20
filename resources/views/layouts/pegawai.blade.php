@@ -65,6 +65,101 @@
     <link rel="stylesheet"
           href="{{ asset('css/dashboard-pegawai.css') }}">
 
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/styles/choices.min.css">
+
+    <style>
+        .choices { margin-bottom: 0; }
+        .choices__inner {
+            min-height: 48px;
+            padding: 7px 12px;
+            border: 1px solid #dbe2ea;
+            border-radius: 12px;
+            background: #fff;
+        }
+        .is-focused .choices__inner,
+        .is-open .choices__inner {
+            border-color: #0F4C81;
+            box-shadow: 0 0 0 .2rem rgba(15, 76, 129, .15);
+        }
+        .choices__list--dropdown,
+        .choices__list[aria-expanded] { z-index: 1060; }
+        .choices__list--dropdown .choices__list,
+        .choices__list[aria-expanded] .choices__list {
+            max-height: 260px;
+            overflow-y: auto;
+        }
+        .choices__input { border-radius: 8px; }
+
+        .choices {
+            width: 100%;
+            font-size: 1rem;
+        }
+        .choices__inner {
+            width: 100%;
+            min-height: 48px !important;
+            height: auto !important;
+            padding: 7px 12px !important;
+            overflow: hidden;
+        }
+        .choices[data-type*="select-one"] .choices__inner {
+            padding-bottom: 7px !important;
+        }
+        .choices__list--single {
+            padding: 5px 28px 5px 2px !important;
+            line-height: 1.35;
+        }
+        .choices__list--multiple {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            padding: 0 !important;
+        }
+        .choices__list--multiple .choices__item {
+            display: inline-flex !important;
+            align-items: center;
+            max-width: 100%;
+            min-height: 32px !important;
+            height: auto !important;
+            margin: 0 !important;
+            padding: 5px 10px !important;
+            border-radius: 8px !important;
+            font-size: .85rem !important;
+            line-height: 1.25 !important;
+            white-space: normal;
+            word-break: break-word;
+        }
+        .choices__list--multiple .choices__button {
+            width: 20px !important;
+            min-width: 20px !important;
+            height: 20px !important;
+            margin: 0 0 0 6px !important;
+            padding: 0 !important;
+            border-left: 0 !important;
+            background-size: 8px !important;
+        }
+        .choices__input {
+            min-width: 120px;
+            min-height: 34px !important;
+            height: 34px !important;
+            margin: 0 !important;
+            padding: 5px 8px !important;
+            background: #f8fafc !important;
+        }
+        .choices__list--dropdown,
+        .choices__list[aria-expanded] {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .choices__list--dropdown .choices__item,
+        .choices__list[aria-expanded] .choices__item {
+            min-height: auto !important;
+            padding: 10px 14px !important;
+            line-height: 1.35 !important;
+        }
+    </style>
+
     @stack('styles')
 
 </head>
@@ -103,7 +198,7 @@
 
                 <small>
 
-                    ATR / BPN
+                    Administrasi Digital
 
                 </small>
 
@@ -658,6 +753,29 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/scripts/choices.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('select:not([data-native-select])').forEach((select) => {
+        if (select.dataset.choicesEnhanced === 'true') return;
+        select.dataset.choicesEnhanced = 'true';
+
+        new Choices(select, {
+            searchEnabled: true,
+            searchPlaceholderValue: 'Ketik untuk mencari...',
+            noResultsText: 'Data tidak ditemukan',
+            noChoicesText: 'Tidak ada pilihan',
+            itemSelectText: 'Pilih',
+            shouldSort: false,
+            searchResultLimit: 100,
+            renderChoiceLimit: -1,
+            removeItemButton: select.multiple,
+            allowHTML: false,
+        });
+    });
+});
+</script>
 
 @stack('scripts')
 

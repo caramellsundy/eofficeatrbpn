@@ -254,6 +254,12 @@ Route::middleware(['auth','role:admin'])
         )
         ->name('tolak');
 
+        Route::post(
+            '{id}/teruskan-pimpinan',
+            [AdminSuratMasukController::class, 'teruskanKePimpinan']
+        )
+        ->name('teruskan-pimpinan');
+
     });
 
 
@@ -304,11 +310,18 @@ Route::middleware(['auth','role:admin'])
 
 
 
-        Route::get('/settings',
-            'settings')
-            ->name('settings.index');
+        Route::get('/users', 'userIndex')->name('users.index');
+        Route::patch('/users/{id}/role', 'updateUserRole')->name('users.updateRole');
+        Route::patch('/users/{id}/password', 'resetUserPassword')->name('users.resetPassword');
+        Route::delete('/users/{id}', 'destroyUser')->name('users.destroy');
 
 
+    });
+
+    Route::controller(\App\Http\Controllers\Admin\AdminSettingsController::class)->prefix('settings')->name('settings.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::put('/', 'update')->name('update');
+        Route::patch('/trash/{type}/{id}/restore', 'restore')->name('trash.restore');
     });
 
 
@@ -357,6 +370,9 @@ Route::middleware(['auth','role:pegawai'])
         PegawaiSuratKeluarController::class
     );
 
+    Route::put('/surat-keluar/{id}/kirim', [PegawaiSuratKeluarController::class, 'kirim'])
+        ->name('surat-keluar.kirim');
+
 
 
     Route::get('/disposisi',
@@ -384,7 +400,7 @@ Route::middleware(['auth','role:pegawai'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')
+Route::middleware(['auth', 'role:umum'])
 ->prefix('umum')
 ->name('umum.')
 ->group(function(){

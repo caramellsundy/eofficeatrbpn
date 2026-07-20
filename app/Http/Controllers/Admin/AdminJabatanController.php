@@ -104,7 +104,11 @@ class AdminJabatanController extends Controller
      */
     public function destroy($id)
     {
-        $jabatan = Jabatan::findOrFail($id);
+        $jabatan = Jabatan::withCount('pegawai')->findOrFail($id);
+
+        if ($jabatan->pegawai_count > 0) {
+            return back()->with('error', 'Jabatan masih digunakan oleh pegawai dan tidak dapat dihapus.');
+        }
 
         $jabatan->delete();
 

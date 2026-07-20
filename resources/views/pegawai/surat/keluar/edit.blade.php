@@ -173,29 +173,29 @@
 
                     <label class="form-label fw-semibold">
 
-                        Jabatan Pimpinan
+                        Pimpinan / Penandatangan
 
                     </label>
 
                     <select
-                        name="jabatan_pimpinan_id"
-                        id="jabatan_pimpinan"
-                        class="form-select">
+                        name="pimpinan_pegawai_id"
+                        size="6"
+                        required
+                        class="form-select pimpinan-select @error('pimpinan_pegawai_id') is-invalid @enderror">
 
                         <option value="">
 
-                            -- Pilih Jabatan --
+                            -- Pilih nama dan jabatan pimpinan --
 
                         </option>
 
-                        @foreach($jabatans as $jabatan)
+                        @foreach($pimpinans as $pimpinan)
 
                             <option
-                                value="{{ $jabatan->id }}"
-                                data-nama="{{ $jabatan->nama_pimpinan ?? '' }}"
-                                {{ old('jabatan_pimpinan_id',$surat->jabatan_pimpinan_id)==$jabatan->id ? 'selected' : '' }}>
+                                value="{{ $pimpinan->id }}"
+                                {{ old('pimpinan_pegawai_id', $selectedPimpinanId)==$pimpinan->id ? 'selected' : '' }}>
 
-                                {{ $jabatan->nama }}
+                                {{ $pimpinan->nama }} — {{ $pimpinan->jabatan->nama }}
 
                             </option>
 
@@ -203,28 +203,11 @@
 
                     </select>
 
-                </div>
+                    <small class="text-muted">Daftar dapat di-scroll. Nama dan jabatan disimpan otomatis.</small>
 
-
-
-                {{-- ===========================
-                    NAMA PIMPINAN
-                ============================ --}}
-                <div class="col-md-6">
-
-                    <label class="form-label fw-semibold">
-
-                        Nama Pimpinan
-
-                    </label>
-
-                    <input
-                        type="text"
-                        id="nama_pimpinan"
-                        name="nama_pimpinan"
-                        class="form-control"
-                        value="{{ old('nama_pimpinan',$surat->nama_pimpinan) }}"
-                        readonly>
+                    @error('pimpinan_pegawai_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
 
                 </div>
 
@@ -421,40 +404,6 @@
 @endsection
 
 
-@push('scripts')
-
-<script>
-
-document.addEventListener('DOMContentLoaded',function(){
-
-    const jabatan =
-        document.getElementById('jabatan_pimpinan');
-
-    const pimpinan =
-        document.getElementById('nama_pimpinan');
-
-    function isiPimpinan(){
-
-        let selected =
-            jabatan.options[jabatan.selectedIndex];
-
-        pimpinan.value =
-            selected.dataset.nama ?? '';
-
-    }
-
-    isiPimpinan();
-
-    jabatan.addEventListener(
-        'change',
-        isiPimpinan
-    );
-
-});
-
-</script>
-
-@endpush
 
 
 @push('styles')

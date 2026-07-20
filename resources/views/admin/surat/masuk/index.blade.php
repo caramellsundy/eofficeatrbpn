@@ -78,7 +78,7 @@
  
             <h3>
  
-                {{ $surat->where('status','menunggu')->count() }}
+                {{ $menunggu }}
  
             </h3>
  
@@ -104,13 +104,13 @@
  
             <h3>
  
-                {{ $surat->where('status','disetujui')->count() }}
+                {{ $disetujui }}
  
             </h3>
  
             <p>
  
-                Disetujui
+                Diverifikasi
  
             </p>
  
@@ -130,13 +130,13 @@
  
             <h3>
  
-                {{ $surat->where('status','ditolak')->count() }}
+                {{ $ditolak }}
  
             </h3>
  
             <p>
  
-                Ditolak
+                Dikembalikan
  
             </p>
  
@@ -353,25 +353,25 @@
  
                                 @break
  
-                                @case('disetujui')
+                                @case('diverifikasi')
  
                                     <span class="badge bg-success">
  
                                         <i class="bi bi-check-circle-fill me-1"></i>
  
-                                        Disetujui
+                                        Diverifikasi
  
                                     </span>
  
                                 @break
  
-                                @case('ditolak')
+                                @case('dikembalikan')
  
                                     <span class="badge bg-danger">
  
                                         <i class="bi bi-x-circle-fill me-1"></i>
  
-                                        Ditolak
+                                        Dikembalikan
  
                                     </span>
  
@@ -439,7 +439,7 @@
  
                                 </a>
  
-                                @if($item->status == 'menunggu')
+                                @if($item->status == 'diajukan')
  
                                     <a
                                         href="{{ route('admin.surat.masuk.show',$item->id) }}"

@@ -321,7 +321,7 @@
                     <input
                         type="text"
                         class="form-control"
-                        value="Menunggu"
+                        value="Draft"
                         readonly>
 
                 </div>
@@ -355,7 +355,7 @@
                 <i class="bi bi-info-circle-fill me-2"></i>
 
                 Setelah surat disimpan, status akan menjadi
-                <strong>Menunggu</strong>.
+                <strong>Draft</strong> sampai Anda menekan tombol kirim.
                 Surat dapat diedit sebelum diproses.
 
             </div>

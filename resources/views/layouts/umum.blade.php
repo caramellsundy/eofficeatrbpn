@@ -81,7 +81,7 @@
 
                 <small>
 
-                    ATR / BPN
+                    Administrasi Digital
 
                 </small>
 

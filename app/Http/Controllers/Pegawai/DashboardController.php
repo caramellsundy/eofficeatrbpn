@@ -106,10 +106,7 @@ class DashboardController extends Controller
             'user_id',
             $user->id
         )
-        ->where(
-            'status',
-            'menunggu'
-        )
+        ->whereIn('status', ['draft', 'diajukan', 'dikembalikan'])
         ->count();
 
 

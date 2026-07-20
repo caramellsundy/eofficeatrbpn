@@ -15,7 +15,8 @@ class SuratMasukController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Surat::where('jenis_surat', 'masuk');
+        $query = Surat::where('jenis_surat', 'masuk')
+            ->where('user_id', Auth::id());
 
         if ($request->filled('keyword')) {
             $query->where(function ($q) use ($request) {
@@ -23,6 +24,11 @@ class SuratMasukController extends Controller
                   ->orWhere('asal_surat', 'like', '%' . $request->keyword . '%')
                   ->orWhere('perihal', 'like', '%' . $request->keyword . '%');
             });
+        }
+
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
 
         $suratMasuk = $query->latest()->paginate(10);
@@ -75,7 +81,7 @@ class SuratMasukController extends Controller
             'file_path'      => $file,
             'jabatan_pimpinan_id' => $request->jabatan_pimpinan_id,
             'nama_pimpinan'  => $request->nama_pimpinan,
-            'status'         => 'menunggu',
+            'status'         => 'draft',
         ]);
 
         return redirect()
@@ -88,7 +94,7 @@ class SuratMasukController extends Controller
      */
     public function show($id)
     {
-        $surat = Surat::findOrFail($id);
+        $surat = $this->suratMilikPegawai($id);
 
         return view('pegawai.surat.masuk.show', compact('surat'));
     }
@@ -102,7 +108,7 @@ class SuratMasukController extends Controller
         ->where('user_id', auth()->id())
         ->firstOrFail();
 
-    if ($surat->status != 'menunggu') {
+    if (!in_array($surat->status, ['draft', 'dikembalikan'], true)) {
         return redirect()
             ->route('pegawai.surat-masuk.index')
             ->with('error', 'Surat yang sudah diproses tidak dapat diedit.');
@@ -119,7 +125,7 @@ class SuratMasukController extends Controller
         ->where('user_id', auth()->id())
         ->firstOrFail();
 
-    if ($surat->status != 'menunggu') {
+    if (!in_array($surat->status, ['draft', 'dikembalikan'], true)) {
         return redirect()
             ->route('pegawai.surat-masuk.index')
             ->with('error', 'Surat sudah tidak dapat diperbarui.');
@@ -159,9 +165,9 @@ class SuratMasukController extends Controller
      */
     public function destroy($id)
     {
-        $surat = Surat::findOrFail($id);
+        $surat = $this->suratMilikPegawai($id);
 
-        if ($surat->status != 'menunggu') {
+        if (!in_array($surat->status, ['draft', 'dikembalikan'], true)) {
             return back()->with('error', 'Surat tidak dapat dihapus.');
         }
 
@@ -177,18 +183,25 @@ class SuratMasukController extends Controller
      */
     public function kirim($id)
     {
-        $surat = Surat::findOrFail($id);
+        $surat = $this->suratMilikPegawai($id);
 
-        if ($surat->status !== 'menunggu') {
+        if (!in_array($surat->status, ['draft', 'dikembalikan'], true)) {
             return back()->with('error', 'Surat sudah diproses.');
         }
 
         $surat->update([
-            'status' => 'menunggu',
+            'status' => 'diajukan',
         ]);
 
         return redirect()
             ->route('pegawai.surat-masuk.index')
             ->with('success', 'Surat berhasil dikirim dan masuk antrean verifikasi.');
+    }
+
+    private function suratMilikPegawai(int $id): Surat
+    {
+        return Surat::where('user_id', Auth::id())
+            ->where('jenis_surat', 'masuk')
+            ->findOrFail($id);
     }
 }

@@ -617,19 +617,19 @@
 
                                     $warna='secondary';
 
-                                    if($surat->status=='menunggu') $warna='warning';
+                                    if(in_array($surat->status, ['draft', 'diajukan'])) $warna='warning';
 
-                                    elseif($surat->status=='diproses') $warna='primary';
+                                    elseif($surat->status=='diverifikasi') $warna='success';
 
                                     elseif($surat->status=='selesai') $warna='success';
 
-                                    elseif($surat->status=='ditolak') $warna='danger';
+                                    elseif($surat->status=='dikembalikan') $warna='danger';
 
                                 @endphp
 
                                 <span class="badge bg-{{ $warna }}">
 
-                                    {{ ucfirst($surat->status) }}
+                                    {{ $surat->status_label }}
 
                                 </span>
 

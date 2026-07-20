@@ -99,7 +99,7 @@
 
                 <h3>
 
-                    {{ $surat->where('status','Menunggu')->count() }}
+                    {{ $surat->where('status','diajukan')->count() }}
 
                 </h3>
 
@@ -119,11 +119,11 @@
 
             <div>
 
-                <span>Diproses</span>
+                <span>Diverifikasi</span>
 
                 <h3>
 
-                    {{ $surat->where('status','Diproses')->count() }}
+                    {{ $surat->where('status','diverifikasi')->count() }}
 
                 </h3>
 
@@ -143,11 +143,11 @@
 
             <div>
 
-                <span>Selesai</span>
+                <span>Ke Pimpinan</span>
 
                 <h3>
 
-                    {{ $surat->where('status','Selesai')->count() }}
+                    {{ $surat->where('status','diteruskan_ke_pimpinan')->count() }}
 
                 </h3>
 
@@ -244,26 +244,26 @@
                     </option>
 
                     <option
-                        value="Menunggu"
-                        {{ request('status')=='Menunggu' ? 'selected' : '' }}>
+                        value="draft"
+                        {{ request('status')=='draft' ? 'selected' : '' }}>
 
-                        Menunggu
-
-                    </option>
-
-                    <option
-                        value="Diproses"
-                        {{ request('status')=='Diproses' ? 'selected' : '' }}>
-
-                        Diproses
+                        Draft
 
                     </option>
 
                     <option
-                        value="Selesai"
-                        {{ request('status')=='Selesai' ? 'selected' : '' }}>
+                        value="diajukan"
+                        {{ request('status')=='diajukan' ? 'selected' : '' }}>
 
-                        Selesai
+                        Diajukan
+
+                    </option>
+
+                    <option
+                        value="diteruskan_ke_pimpinan"
+                        {{ request('status')=='diteruskan_ke_pimpinan' ? 'selected' : '' }}>
+
+                        Diteruskan ke Pimpinan
 
                     </option>
 
@@ -377,31 +377,31 @@
 
     <td>
 
-        @if($item->status=='Menunggu')
+        @if(in_array($item->status, ['draft', 'Menunggu']))
 
             <span class="badge bg-warning text-dark">
 
-                Menunggu
+                Draft
 
             </span>
 
-        @elseif($item->status=='Diproses')
+        @elseif($item->status=='diajukan')
 
             <span class="badge bg-info text-dark">
 
-                Diproses
+                Diajukan
 
             </span>
 
-        @elseif($item->status=='Selesai')
+        @elseif($item->status=='diteruskan_ke_pimpinan')
 
             <span class="badge bg-success">
 
-                Selesai
+                Diteruskan ke Pimpinan
 
             </span>
 
-        @elseif($item->status=='Ditolak')
+        @elseif($item->status=='dikembalikan')
 
             <span class="badge bg-danger">
 
@@ -413,7 +413,7 @@
 
             <span class="badge bg-secondary">
 
-                {{ $item->status }}
+                {{ $item->status_label }}
 
             </span>
 
@@ -436,6 +436,7 @@
             </a>
 
             {{-- EDIT --}}
+            @if(in_array($item->status, ['draft', 'dikembalikan', 'Menunggu']))
             <a
                 href="{{ route('pegawai.surat-keluar.edit',$item->id) }}"
                 class="btn btn-sm btn-outline-warning"
@@ -444,6 +445,14 @@
                 <i class="bi bi-pencil-square"></i>
 
             </a>
+
+            <form action="{{ route('pegawai.surat-keluar.kirim', $item->id) }}" method="POST" class="d-inline">
+                @csrf
+                @method('PUT')
+                <button type="submit" class="btn btn-sm btn-outline-success" title="Kirim ke admin" onclick="return confirm('Kirim surat ini ke admin?')">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </form>
 
             {{-- HAPUS --}}
             <form
@@ -465,6 +474,7 @@
                 </button>
 
             </form>
+            @endif
 
         </div>
 

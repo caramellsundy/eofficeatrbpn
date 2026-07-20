@@ -221,25 +221,25 @@
  
                         @break
  
-                        @case('disetujui')
+                        @case('diverifikasi')
  
                             <span class="badge bg-success">
  
                                 <i class="bi bi-check-circle-fill me-1"></i>
  
-                                Disetujui
+                                Diverifikasi
  
                             </span>
  
                         @break
  
-                        @case('ditolak')
+                        @case('dikembalikan')
  
                             <span class="badge bg-danger">
  
                                 <i class="bi bi-x-circle-fill me-1"></i>
  
-                                Ditolak
+                                Dikembalikan
  
                             </span>
  
@@ -443,7 +443,7 @@
     {{-- PANEL VERIFIKASI --}}
     {{-- =========================================== --}}
  
-    @if($surat->status == 'menunggu')
+    @if($surat->status == 'diajukan')
  
         <div class="verify-panel fade-up">
  
@@ -459,8 +459,7 @@
  
                 <p class="text-muted mb-0">
  
-                    Setujui untuk meneruskan ke tahap disposisi,
-                    atau tolak jika surat tidak memenuhi syarat.
+                    Verifikasi surat yang lengkap atau kembalikan kepada pegawai untuk diperbaiki.
  
                 </p>
  
@@ -497,7 +496,7 @@
  
                         <i class="bi bi-check-circle-fill me-2"></i>
  
-                        Setujui Surat
+                        Verifikasi Surat
  
                     </button>
  
@@ -516,7 +515,7 @@
  
                     <label class="form-label fw-semibold">
  
-                        Alasan Penolakan
+                        Catatan Perbaikan
                         <span class="text-danger">*</span>
  
                     </label>
@@ -525,7 +524,7 @@
                         name="catatan_admin"
                         rows="3"
                         class="form-control"
-                        placeholder="Jelaskan alasan penolakan...">{{ old('catatan_admin') }}</textarea>
+                        placeholder="Jelaskan bagian yang perlu diperbaiki...">{{ old('catatan_admin') }}</textarea>
  
                 </div>
  
@@ -534,11 +533,11 @@
                     <button
                         type="submit"
                         class="btn btn-outline-danger px-4"
-                        onclick="return confirm('Yakin menolak surat ini?')">
+                        onclick="return confirm('Kembalikan surat ini kepada pegawai?')">
  
                         <i class="bi bi-x-circle-fill me-2"></i>
  
-                        Tolak Surat
+                        Kembalikan Surat
  
                     </button>
  
@@ -548,6 +547,33 @@
  
         </div>
  
+    @endif
+
+    @if($surat->status == 'diverifikasi')
+        <div class="verify-panel fade-up">
+            <div class="verify-header">
+                <h4><i class="bi bi-send-check text-primary me-2"></i>Teruskan ke Pimpinan</h4>
+                <p class="text-muted mb-0">Tahap ini hanya mencatat penyaluran oleh admin; tidak membuat akun atau alur kerja pimpinan.</p>
+            </div>
+            <form action="{{ route('admin.surat.masuk.teruskan-pimpinan', $surat->id) }}" method="POST" class="verify-form">
+                @csrf
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Metode penerusan</label>
+                    <select name="metode_penerusan" class="form-select" required>
+                        <option value="fisik">Dokumen fisik</option>
+                        <option value="email">Email</option>
+                        <option value="lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Catatan pengantar</label>
+                    <textarea name="catatan_pengantar" rows="3" class="form-control" maxlength="2000">{{ old('catatan_pengantar') }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary px-4" onclick="return confirm('Catat surat ini sebagai telah diteruskan ke pimpinan?')">
+                    <i class="bi bi-send-fill me-2"></i>Teruskan ke Pimpinan
+                </button>
+            </form>
+        </div>
     @endif
  
     <div class="detail-footer">

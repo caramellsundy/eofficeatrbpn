@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Surat extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'surats';
 
@@ -47,6 +48,11 @@ class Surat extends Model
         'jabatan_pimpinan_id',
         'nama_pimpinan',
 
+        'diteruskan_oleh',
+        'diteruskan_pada',
+        'catatan_pengantar',
+        'metode_penerusan',
+
     ];
 
     protected $casts = [
@@ -56,6 +62,7 @@ class Surat extends Model
         'tanggal_kirim'  => 'date',
 
         'is_priority'    => 'boolean',
+        'diteruskan_pada' => 'datetime',
 
     ];
 
@@ -120,6 +127,14 @@ public function disposisiTujuans()
 
             'menunggu'  => 'warning',
 
+            'draft' => 'secondary',
+            'diajukan' => 'warning',
+            'diverifikasi' => 'success',
+            'dikembalikan' => 'danger',
+            'diteruskan_ke_pimpinan' => 'primary',
+            'terkirim' => 'info',
+            'diarsipkan' => 'dark',
+
             'disetujui' => 'success',
 
             'diproses'  => 'info',
@@ -137,12 +152,27 @@ public function disposisiTujuans()
 {
     return $this->belongsTo(Jabatan::class,'jabatan_pimpinan_id');
 }
+
+    public function penerus()
+    {
+        return $this->belongsTo(User::class, 'diteruskan_oleh');
+    }
     /**
      * Label status
      */
     public function getStatusLabelAttribute()
     {
-        return ucfirst($this->status ?? '-');
+        return match ($this->status) {
+            'draft' => 'Draft',
+            'diajukan' => 'Diajukan ke Admin',
+            'diverifikasi' => 'Diverifikasi Admin',
+            'dikembalikan' => 'Dikembalikan untuk Perbaikan',
+            'diteruskan_ke_pimpinan' => 'Diteruskan ke Pimpinan',
+            'terkirim' => 'Terkirim',
+            'diarsipkan' => 'Diarsipkan',
+            'selesai' => 'Selesai',
+            default => ucwords(str_replace('_', ' ', $this->status ?? '-')),
+        };
     }
 
     /*

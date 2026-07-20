@@ -76,7 +76,7 @@
 
             <h3>
 
-                {{ $suratMasuk->where('status','Menunggu')->count() }}
+                {{ $suratMasuk->where('status','diajukan')->count() }}
 
             </h3>
 
@@ -96,11 +96,11 @@
 
         <div>
 
-            <span>Diproses</span>
+            <span>Diverifikasi</span>
 
             <h3>
 
-                {{ $suratMasuk->where('status','Diproses')->count() }}
+                {{ $suratMasuk->where('status','diverifikasi')->count() }}
 
             </h3>
 
@@ -120,11 +120,11 @@
 
         <div>
 
-            <span>Selesai</span>
+            <span>Ke Pimpinan</span>
 
             <h3>
 
-                {{ $suratMasuk->where('status','Selesai')->count() }}
+                {{ $suratMasuk->where('status','diteruskan_ke_pimpinan')->count() }}
 
             </h3>
 
@@ -226,26 +226,26 @@
                 </option>
 
                 <option
-                    value="Menunggu"
-                    {{ request('status')=='Menunggu' ? 'selected' : '' }}>
+                    value="draft"
+                    {{ request('status')=='draft' ? 'selected' : '' }}>
 
-                    Menunggu
-
-                </option>
-
-                <option
-                    value="Diproses"
-                    {{ request('status')=='Diproses' ? 'selected' : '' }}>
-
-                    Diproses
+                    Draft
 
                 </option>
 
                 <option
-                    value="Selesai"
-                    {{ request('status')=='Selesai' ? 'selected' : '' }}>
+                    value="diajukan"
+                    {{ request('status')=='diajukan' ? 'selected' : '' }}>
 
-                    Selesai
+                    Diajukan
+
+                </option>
+
+                <option
+                    value="diteruskan_ke_pimpinan"
+                    {{ request('status')=='diteruskan_ke_pimpinan' ? 'selected' : '' }}>
+
+                    Diteruskan ke Pimpinan
 
                 </option>
 
@@ -361,27 +361,27 @@
 
     <td>
 
-        @if($surat->status == 'Menunggu')
+        @if($surat->status == 'diajukan')
 
             <span class="badge bg-warning">
 
-                Menunggu
+                Diajukan
 
             </span>
 
-        @elseif($surat->status == 'Diproses')
+        @elseif($surat->status == 'diverifikasi')
 
             <span class="badge bg-primary">
 
-                Diproses
+                Diverifikasi
 
             </span>
 
-        @elseif($surat->status == 'Selesai')
+        @elseif($surat->status == 'diteruskan_ke_pimpinan')
 
             <span class="badge bg-success">
 
-                Selesai
+                Diteruskan ke Pimpinan
 
             </span>
 
@@ -389,7 +389,7 @@
 
             <span class="badge bg-secondary">
 
-                {{ $surat->status }}
+                {{ $surat->status_label }}
 
             </span>
 
@@ -413,7 +413,7 @@
 
 
             {{-- EDIT hanya jika Menunggu --}}
-            @if($surat->status == 'Menunggu')
+            @if(in_array($surat->status, ['draft', 'dikembalikan']))
 
                 <a
                     href="{{ route('pegawai.surat-masuk.edit',$surat->id) }}"
@@ -428,7 +428,7 @@
 
 
             {{-- KIRIM --}}
-            @if($surat->status == 'Menunggu')
+            @if(in_array($surat->status, ['draft', 'dikembalikan']))
 
                 <form
                     action="{{ route('pegawai.surat-masuk.kirim',$surat->id) }}"
@@ -455,7 +455,7 @@
 
 
             {{-- HAPUS --}}
-            @if($surat->status == 'Menunggu')
+            @if(in_array($surat->status, ['draft', 'dikembalikan']))
 
                 <form
                     action="{{ route('pegawai.surat-masuk.destroy',$surat->id) }}"
