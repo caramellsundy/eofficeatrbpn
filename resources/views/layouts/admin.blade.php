@@ -83,6 +83,34 @@
                 width: 100%;
             }
         }
+        /* Sidebar admin: compact, konsisten, dan tetap nyaman digulir. */
+        .sidebar { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.25) transparent; }
+        .sidebar::-webkit-scrollbar { width: 5px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.24); border-radius: 10px; }
+        .sidebar-logo { min-height: 112px; padding: 22px 20px; }
+        .sidebar-logo .logo-text { min-width: 0; }
+        .sidebar-logo .logo-text h3,
+        .sidebar-logo .logo-text small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .sidebar-user { margin: 18px 18px 10px; padding: 15px; border-radius: 16px; }
+        .sidebar-user > div:last-child { min-width: 0; }
+        .sidebar-user h6 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .sidebar-menu { padding: 0 14px 24px; }
+        .sidebar-menu .menu-title { margin: 21px 12px 9px; font-size: 10px; letter-spacing: 1.25px; }
+        .sidebar-menu a { min-height: 48px; gap: 13px; margin-bottom: 4px; padding: 11px 14px; border-radius: 12px; text-decoration: none; }
+        .sidebar-menu a > span:not(.menu-badge) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .sidebar-menu a i { width: 22px; font-size: 18px; }
+        .sidebar-menu a.active::before { left: -14px; top: 8px; height: 32px; width: 4px; }
+        .sidebar-menu .menu-badge { margin-left: auto; min-width: 23px; height: 23px; padding: 0 7px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 10px; font-weight: 800; background: #fbbf24; color: #422006; }
+        .sidebar-menu .menu-badge-danger { background: #fecaca; color: #991b1b; }
+        .sidebar-menu a.active .menu-badge { box-shadow: inset 0 0 0 1px rgba(15,76,129,.12); }
+        .sidebar-footer { margin-top: 18px; padding-top: 16px; }
+        .btn-logout { min-height: 46px; padding: 11px 14px; background: rgba(220,53,69,.92); box-shadow: none; }
+        .sidebar.collapsed .sidebar-logo { padding-inline: 12px; }
+        .sidebar.collapsed .sidebar-user { margin-inline: 12px; }
+        .sidebar.collapsed .sidebar-menu { padding-inline: 10px; }
+        .sidebar.collapsed .sidebar-menu a { padding: 12px; }
+        .sidebar.collapsed .sidebar-menu .menu-badge { position: absolute; top: 4px; right: 4px; display: inline-flex; min-width: 18px; height: 18px; padding: 0 5px; font-size: 9px; }
+
         .choices { margin-bottom: 0; }
         .choices__inner {
             min-height: 48px;
