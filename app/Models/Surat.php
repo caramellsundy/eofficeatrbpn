@@ -17,6 +17,7 @@ class Surat extends Model
         'user_id',
 
         'jenis_surat',
+        'kategori_pengajuan',
 
         'nomor_surat',
         'tanggal_surat',
@@ -31,6 +32,8 @@ class Surat extends Model
         'lampiran',
 
         'asal_surat',
+        'nomor_kontak',
+        'asal_instansi',
         'tujuan_surat',
 
         'penandatangan',

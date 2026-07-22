@@ -157,7 +157,7 @@
                         name="asal_surat"
                         class="form-control"
                         value="{{ old('asal_surat') }}"
-                        placeholder="Contoh: Kantor Pertanahan Kota"
+                        placeholder="Contoh: Instansi atau unit pengirim"
                         required>
 
                 </div>
@@ -172,7 +172,7 @@
                         name="tujuan_surat"
                         class="form-control"
                         value="{{ old('tujuan_surat') }}"
-                        placeholder="Contoh: Kepala Kantor ATR/BPN"
+                        placeholder="Contoh: Bagian atau pejabat tujuan"
                         required>
 
                 </div>

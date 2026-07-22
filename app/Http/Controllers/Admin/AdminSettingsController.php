@@ -20,6 +20,10 @@ class AdminSettingsController extends Controller
         'max_upload_mb' => '5', 'disposition_deadline_days' => '3',
         'notify_new_letter' => '1', 'notify_disposition' => '1', 'notify_deadline' => '1',
         'report_signer_name' => '', 'report_signer_title' => '', 'report_header' => 'Laporan Administrasi Persuratan',
+        'public_announcement_title' => 'Informasi Layanan',
+        'public_announcement_message' => 'Pastikan data pengajuan dan dokumen pendukung sudah benar sebelum dikirim.',
+        'public_service_hours' => 'Senin–Jumat, 08.00–16.00',
+        'public_help_email' => '', 'public_help_phone' => '',
     ];
 
     public function index()
@@ -45,6 +49,11 @@ class AdminSettingsController extends Controller
             'disposition_deadline_days' => 'required|integer|min:1|max:30',
             'report_header' => 'required|string|max:150',
             'report_signer_name' => 'nullable|string|max:120', 'report_signer_title' => 'nullable|string|max:120',
+            'public_announcement_title' => 'required|string|max:120',
+            'public_announcement_message' => 'required|string|max:500',
+            'public_service_hours' => 'required|string|max:120',
+            'public_help_email' => 'nullable|email|max:150',
+            'public_help_phone' => 'nullable|string|max:30',
             'notify_new_letter' => 'nullable|boolean', 'notify_disposition' => 'nullable|boolean', 'notify_deadline' => 'nullable|boolean',
         ]);
 
@@ -52,7 +61,7 @@ class AdminSettingsController extends Controller
             $data[$checkbox] = $request->boolean($checkbox);
         }
         foreach ($data as $key => $value) {
-            $group = str_starts_with($key, 'report_') ? 'report' : (str_starts_with($key, 'notify_') ? 'notification' : (in_array($key, ['app_name', 'app_subtitle']) ? 'general' : 'letter'));
+            $group = str_starts_with($key, 'report_') ? 'report' : (str_starts_with($key, 'notify_') ? 'notification' : (str_starts_with($key, 'public_') ? 'public' : (in_array($key, ['app_name', 'app_subtitle']) ? 'general' : 'letter')));
             Setting::putValue($key, $value, $group);
         }
         LogAktivitas::create(['user_id' => auth()->id(), 'action' => 'Perbarui Pengaturan', 'description' => 'Memperbarui konfigurasi sistem.']);

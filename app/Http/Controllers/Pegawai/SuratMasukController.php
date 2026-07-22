@@ -17,6 +17,13 @@ class SuratMasukController extends Controller
     {
         $query = Surat::where('jenis_surat', 'masuk')
             ->where('user_id', Auth::id());
+        $base = clone $query;
+        $stats = [
+            'total' => (clone $base)->count(),
+            'draft' => (clone $base)->where('status', 'draft')->count(),
+            'diajukan' => (clone $base)->whereIn('status', ['diajukan', 'diverifikasi', 'diteruskan_ke_pimpinan'])->count(),
+            'perbaikan' => (clone $base)->where('status', 'dikembalikan')->count(),
+        ];
 
         if ($request->filled('keyword')) {
             $query->where(function ($q) use ($request) {
@@ -33,7 +40,7 @@ class SuratMasukController extends Controller
 
         $suratMasuk = $query->latest()->paginate(10);
 
-        return view('pegawai.surat.masuk.index', compact('suratMasuk'));
+        return view('pegawai.surat.masuk.index', compact('suratMasuk', 'stats'));
     }
 
     /**

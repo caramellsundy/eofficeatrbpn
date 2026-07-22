@@ -9,6 +9,7 @@ use App\Models\Surat;
 use App\Models\Pegawai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
@@ -95,6 +96,14 @@ class AdminController extends Controller
             );
         }
 
+        if ($request->role !== 'umum' && blank($user->nip)) {
+            return back()->with('error', 'Isi NIP pengguna terlebih dahulu sebelum mengubahnya menjadi Admin atau Pegawai.');
+        }
+
+        if ($request->role === 'pegawai' && ! $user->pegawai) {
+            return back()->with('error', 'Hubungkan akun dengan Data Pegawai sebelum memberikan role Pegawai.');
+        }
+
         /*
         |------------------------------------------------------------
         | Update role pada tabel users
@@ -119,6 +128,28 @@ class AdminController extends Controller
             'success',
             'Role berhasil diperbarui.'
         );
+    }
+
+    public function updateUserNip(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->role === 'umum') {
+            return back()->with('error', 'Akun Umum menggunakan email dan tidak memerlukan NIP.');
+        }
+
+        $data = $request->validate([
+            'nip' => [
+                'required', 'string', 'max:50',
+                Rule::unique('users', 'nip')->ignore($user->id),
+                Rule::unique('pegawai', 'nip')->ignore($user->pegawai?->id),
+            ],
+        ]);
+
+        $user->update(['nip' => $data['nip']]);
+        $user->pegawai?->update(['nip' => $data['nip']]);
+
+        return back()->with('success', 'NIP akun berhasil diperbarui.');
     }
 
     /*

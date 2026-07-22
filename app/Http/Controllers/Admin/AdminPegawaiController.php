@@ -53,7 +53,7 @@ class AdminPegawaiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-        'nip' => 'required|unique:pegawai,nip',
+        'nip' => 'required|unique:pegawai,nip|unique:users,nip',
         'nama' => 'required|string|max:100',
         'email' => 'required|email|unique:users,email|unique:pegawai,email',
         'password' => 'required|string|min:8|confirmed',
@@ -66,6 +66,7 @@ class AdminPegawaiController extends Controller
         DB::transaction(function () use ($request) {
             $user = User::create([
                 'name' => $request->nama,
+                'nip' => $request->nip,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'role' => 'pegawai',
@@ -118,12 +119,16 @@ class AdminPegawaiController extends Controller
     public function update(Request $request, Pegawai $pegawai)
     {
         $request->validate([
-            'nip'             => 'required|unique:pegawai,nip,' . $pegawai->id,
             'nama'            => 'required|string|max:100',
             'email'           => [
                 'required', 'email',
                 Rule::unique('pegawai', 'email')->ignore($pegawai->id),
                 Rule::unique('users', 'email')->ignore($pegawai->user_id),
+            ],
+            'nip' => [
+                'required',
+                Rule::unique('pegawai', 'nip')->ignore($pegawai->id),
+                Rule::unique('users', 'nip')->ignore($pegawai->user_id),
             ],
             'no_hp'           => 'nullable|max:20',
             'alamat'          => 'nullable',
@@ -137,6 +142,7 @@ class AdminPegawaiController extends Controller
             if (!$user) {
                 $user = User::create([
                     'name' => $request->nama,
+                    'nip' => $request->nip,
                     'email' => $request->email,
                     'password' => Hash::make($request->nip),
                     'role' => 'pegawai',
@@ -144,6 +150,7 @@ class AdminPegawaiController extends Controller
             } else {
                 $user->update([
                     'name' => $request->nama,
+                    'nip' => $request->nip,
                     'email' => $request->email,
                     'role' => 'pegawai',
                 ]);

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Surat;
 use App\Models\DisposisiTujuan;
 use App\Models\Pegawai;
+use App\Models\LogAktivitas;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -152,6 +153,7 @@ class DashboardController extends Controller
             'user_id',
             $user->id
         )
+        ->where('jenis_surat', 'masuk')
         ->latest()
         ->take(5)
         ->get();
@@ -184,58 +186,27 @@ class DashboardController extends Controller
         */
 
 
-        $aktivitasTerbaru = collect();
+        $aktivitasTerbaru = LogAktivitas::with('surat')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->take(8)
+            ->get()
+            ->map(function (LogAktivitas $log) {
+                $surat = $log->surat;
 
-
-
-        foreach($suratTerbaru as $item){
-
-
-            $aktivitasTerbaru->push([
-
-                'jam'=>$item->created_at,
-
-                'icon'=>'bi-send-fill',
-
-                'warna'=>'success',
-
-                'judul'=>'Mengirim Surat',
-
-                'keterangan'=>$item->nomor_surat
-
-            ]);
-
-
-        }
-
-
-
-        foreach($disposisiTerbaru as $item){
-
-
-            $aktivitasTerbaru->push([
-
-                'jam'=>$item->created_at,
-
-                'icon'=>'bi-envelope-check',
-
-                'warna'=>'warning',
-
-                'judul'=>'Menerima Disposisi',
-
-                'keterangan'=>$item->disposisi->catatan ?? '-'
-
-            ]);
-
-
-        }
-
-
-
-        $aktivitasTerbaru =
-            $aktivitasTerbaru
-            ->sortByDesc('jam')
-            ->take(8);
+                return [
+                    'jam' => $log->created_at,
+                    'jenis' => $log->action,
+                    'nomor' => $surat?->nomor_surat ?? '-',
+                    'keterangan' => $log->description,
+                    'status' => $surat?->status,
+                    'url' => $surat
+                        ? ($surat->jenis_surat === 'keluar'
+                            ? route('pegawai.surat-keluar.show', $surat->id)
+                            : route('pegawai.surat-masuk.show', $surat->id))
+                        : null,
+                ];
+            });
 
 
 

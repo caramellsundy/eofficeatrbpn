@@ -18,6 +18,13 @@ class DisposisiController extends Controller
         $pegawai = $this->pegawaiLogin();
         $query = DisposisiTujuan::with(['disposisi.surat', 'disposisi.pengirim'])
             ->where('pegawai_id', $pegawai->id);
+        $base = DisposisiTujuan::where('pegawai_id', $pegawai->id);
+        $stats = [
+            'total' => (clone $base)->count(),
+            'belum' => (clone $base)->where('status', 'Belum Dibaca')->count(),
+            'dibaca' => (clone $base)->where('status', 'Sudah Dibaca')->count(),
+            'selesai' => (clone $base)->where('status', 'Selesai')->count(),
+        ];
 
         // Pencarian
         if ($request->filled('keyword')) {
@@ -46,7 +53,7 @@ class DisposisiController extends Controller
 
         return view(
             'pegawai.disposisi.index',
-            compact('disposisi')
+            compact('disposisi', 'stats')
         );
     }
 

@@ -19,6 +19,13 @@ class SuratKeluarController extends Controller
     {
         $query = Surat::where('user_id', Auth::id())
             ->where('jenis_surat', 'keluar');
+        $base = clone $query;
+        $stats = [
+            'total' => (clone $base)->count(),
+            'draft' => (clone $base)->where('status', 'draft')->count(),
+            'diajukan' => (clone $base)->whereIn('status', ['diajukan', 'diverifikasi'])->count(),
+            'selesai' => (clone $base)->whereIn('status', ['terkirim', 'selesai', 'diarsipkan'])->count(),
+        ];
 
         if ($request->filled('keyword')) {
 
@@ -60,7 +67,7 @@ class SuratKeluarController extends Controller
 
         return view(
             'pegawai.surat.keluar.index',
-            compact('surat')
+            compact('surat', 'stats')
         );
     }
 

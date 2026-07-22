@@ -1,12 +1,6 @@
 @extends('layouts.umum')
-
 @section('title', 'Struktur Organisasi')
-
 @section('content')
-<div class="container py-3">
-    <div class="card shadow-sm border-0"><div class="card-body p-4">
-        <h4>Struktur Organisasi</h4><p class="text-muted">Kementerian Agraria dan Tata Ruang/Badan Pertanahan Nasional.</p>
-        <div class="list-group"><div class="list-group-item"><strong>Menteri ATR/Kepala BPN</strong></div><div class="list-group-item">Wakil Menteri ATR/Wakil Kepala BPN</div><div class="list-group-item">Sekretariat Jenderal</div><div class="list-group-item">Direktorat Jenderal dan Kantor Pertanahan</div></div>
-    </div></div>
-</div>
+<div class="container-fluid py-3"><div class="d-flex justify-content-between align-items-center mb-4"><div><h3 class="fw-bold mb-1">Struktur Organisasi</h3><p class="text-muted mb-0">Bagan susunan unit dan hubungan koordinasi organisasi.</p></div><a href="{{ route('umum.dashboard') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-2"></i>Kembali</a></div><div class="card border-0 shadow-sm"><div class="card-header bg-white p-4 d-flex align-items-center gap-3"><span class="structure-icon"><i class="bi bi-diagram-3-fill"></i></span><div><h5 class="fw-bold mb-1">Bagan Organisasi</h5><small class="text-muted">Klik gambar untuk melihat dalam ukuran penuh.</small></div></div><div class="card-body p-3 p-lg-4 text-center structure-image"><a href="{{ asset('images/struktur-organisasi.png') }}" target="_blank"><img src="{{ asset('images/struktur-organisasi.png') }}" alt="Bagan Struktur Organisasi" class="img-fluid"></a></div></div></div>
 @endsection
+@push('styles')<style>.structure-icon{width:44px;height:44px;border-radius:11px;background:#eaf3ff;color:#0d6efd;display:grid;place-items:center;font-size:20px}.structure-image{overflow:auto;background:#f8fafc}.structure-image img{min-width:850px;background:#fff;border:1px solid #e5e7eb;border-radius:8px}</style>@endpush

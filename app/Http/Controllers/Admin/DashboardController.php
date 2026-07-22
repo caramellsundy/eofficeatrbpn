@@ -41,10 +41,9 @@ class DashboardController extends Controller
         $awal = now()->startOfMonth()->subMonths(5);
         $rekapBulanan = Surat::query()
             ->where('created_at', '>=', $awal)
-            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as periode, jenis_surat, COUNT(*) as total")
-            ->groupBy('periode', 'jenis_surat')
-            ->get()
-            ->groupBy('periode');
+            ->get(['created_at', 'jenis_surat'])
+            ->groupBy(fn (Surat $surat) => $surat->created_at->format('Y-m'))
+            ->map(fn ($items) => $items->countBy('jenis_surat'));
 
         $labels = [];
         $grafikMasuk = [];
@@ -55,8 +54,8 @@ class DashboardController extends Controller
             $periode = $bulan->format('Y-m');
             $labels[] = $bulan->translatedFormat('M Y');
             $baris = $rekapBulanan->get($periode, collect());
-            $grafikMasuk[] = (int) optional($baris->firstWhere('jenis_surat', 'masuk'))->total;
-            $grafikKeluar[] = (int) optional($baris->firstWhere('jenis_surat', 'keluar'))->total;
+            $grafikMasuk[] = (int) $baris->get('masuk', 0);
+            $grafikKeluar[] = (int) $baris->get('keluar', 0);
         }
 
         $aktivitasTerbaru = LogAktivitas::with(['user:id,name', 'surat:id,nomor_surat'])

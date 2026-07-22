@@ -9,14 +9,6 @@
             <h2><i class="bi bi-speedometer2 text-primary me-2"></i>Dashboard Administrator</h2>
             <p class="text-muted mb-0">Ringkasan antrean dan pekerjaan yang perlu ditindaklanjuti.</p>
         </div>
-        <div class="d-flex gap-2 flex-wrap">
-            <a href="{{ route('admin.surat.masuk.index', ['status' => 'diajukan']) }}" class="btn btn-outline-primary">
-                <i class="bi bi-clipboard-check me-1"></i> Verifikasi Surat
-            </a>
-            <a href="{{ route('admin.disposisi.create') }}" class="btn btn-primary">
-                <i class="bi bi-send-plus me-1"></i> Buat Disposisi
-            </a>
-        </div>
     </div>
 
     <div class="row g-3 mb-4">
@@ -46,7 +38,7 @@
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-0 pt-4 px-4"><h5 class="fw-bold mb-0">Surat 6 Bulan Terakhir</h5></div>
-                <div class="card-body"><canvas id="chartSurat" height="115"></canvas></div>
+                <div class="card-body chart-container"><canvas id="chartSurat"></canvas></div>
             </div>
         </div>
         <div class="col-lg-4">
@@ -127,22 +119,47 @@
 .status-row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid #eef2f7}.status-row:last-child{border-bottom:0}
 .activity-row{display:flex;gap:12px;align-items:flex-start;padding:13px 0;border-bottom:1px solid #eef2f7}.activity-row:last-child{border-bottom:0}
 .activity-icon{width:38px;height:38px;border-radius:10px;background:#e8f1fa;color:#0f4c81;display:grid;place-items:center;flex:none}
+.chart-container{position:relative;min-height:320px}
+@media(max-width:767.98px){.chart-container{min-height:260px}}
 </style>
 @endpush
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script>
-new Chart(document.getElementById('chartSurat'), {
-    type: 'bar',
-    data: {
-        labels: @json($chartLabels),
-        datasets: [
-            {label: 'Surat Masuk', data: @json($chartMasuk), backgroundColor: '#0F4C81', borderRadius: 6},
-            {label: 'Surat Keluar', data: @json($chartKeluar), backgroundColor: '#4BA3E3', borderRadius: 6}
-        ]
-    },
-    options: {responsive: true, maintainAspectRatio: true, scales: {y: {beginAtZero: true, ticks: {precision: 0}}}}
-});
+(() => {
+    let attempts = 0;
+
+    const renderChart = () => {
+        const canvas = document.getElementById('chartSurat');
+        if (!canvas || canvas.dataset.rendered === 'true') return;
+
+        if (typeof window.Chart === 'undefined') {
+            if (attempts++ < 50) window.setTimeout(renderChart, 100);
+            return;
+        }
+
+        canvas.dataset.rendered = 'true';
+        new window.Chart(canvas, {
+            type: 'bar',
+            data: {
+                labels: @json($chartLabels),
+                datasets: [
+                    {label: 'Surat Masuk', data: @json($chartMasuk), backgroundColor: '#0F4C81', borderRadius: 6},
+                    {label: 'Surat Keluar', data: @json($chartKeluar), backgroundColor: '#4BA3E3', borderRadius: 6}
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {legend: {position: 'bottom'}},
+                scales: {y: {beginAtZero: true, ticks: {precision: 0, stepSize: 1}}}
+            }
+        });
+    };
+
+    document.readyState === 'loading'
+        ? document.addEventListener('DOMContentLoaded', renderChart)
+        : renderChart();
+})();
 </script>
 @endpush

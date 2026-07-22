@@ -28,6 +28,14 @@
                     <div class="col-md-6"><label class="form-label">Subjudul</label><input name="app_subtitle" class="form-control" value="{{ old('app_subtitle', $settings['app_subtitle']) }}" required></div>
                 </div>
                 <div class="info-box mt-4"><i class="bi bi-shield-check"></i><div><strong>Keamanan akun</strong><span>Role, reset password, dan penonaktifan akun dikelola melalui halaman Manajemen Pengguna. Admin terakhir tetap dilindungi.</span></div></div>
+                <div class="setting-heading mt-4"><h4>Informasi Dashboard Umum</h4><p>Konten operasional yang ditampilkan kepada pengguna Umum.</p></div>
+                <div class="row g-3">
+                    <div class="col-md-6"><label class="form-label">Judul Pengumuman</label><input name="public_announcement_title" class="form-control" maxlength="120" value="{{ old('public_announcement_title', $settings['public_announcement_title']) }}" required></div>
+                    <div class="col-md-6"><label class="form-label">Jam Layanan</label><input name="public_service_hours" class="form-control" maxlength="120" value="{{ old('public_service_hours', $settings['public_service_hours']) }}" required></div>
+                    <div class="col-12"><label class="form-label">Isi Pengumuman</label><textarea name="public_announcement_message" class="form-control" rows="3" maxlength="500" required>{{ old('public_announcement_message', $settings['public_announcement_message']) }}</textarea></div>
+                    <div class="col-md-6"><label class="form-label">Email Bantuan</label><input type="email" name="public_help_email" class="form-control" value="{{ old('public_help_email', $settings['public_help_email']) }}" placeholder="bantuan@email.com"></div>
+                    <div class="col-md-6"><label class="form-label">Telepon Bantuan</label><input name="public_help_phone" class="form-control" maxlength="30" value="{{ old('public_help_phone', $settings['public_help_phone']) }}" placeholder="Nomor layanan"></div>
+                </div>
             </div>
 
             <div class="tab-pane fade" id="letters">

@@ -15,7 +15,7 @@
 
         @yield('title','Dashboard')
 
-        | E-Office ATR/BPN
+        | {{ \App\Models\Setting::getValue('app_name','E-Office') }}
 
     </title>
 
@@ -23,31 +23,16 @@
     {{-- Bootstrap --}}
     {{-- ========================================================= --}}
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
 
     {{-- ========================================================= --}}
     {{-- Bootstrap Icons --}}
     {{-- ========================================================= --}}
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-        rel="stylesheet">
 
     {{-- ========================================================= --}}
     {{-- Google Font --}}
     {{-- ========================================================= --}}
 
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
-
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-          rel="stylesheet">
 
     {{-- ========================================================= --}}
     {{-- Laravel Assets --}}
@@ -65,8 +50,6 @@
     <link rel="stylesheet"
           href="{{ asset('css/dashboard-pegawai.css') }}">
 
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/styles/choices.min.css">
 
     <style>
         .choices { margin-bottom: 0; }
@@ -158,9 +141,11 @@
             padding: 10px 14px !important;
             line-height: 1.35 !important;
         }
+        .employee-avatar-image { width:100%; height:100%; object-fit:cover; border-radius:50%; }
     </style>
 
     @stack('styles')
+    <link rel="stylesheet" href="{{ asset('css/pegawai-refinement.css') }}">
 
 </head>
 
@@ -192,13 +177,13 @@
 
                 <h3>
 
-                    E-OFFICE
+                    {{ \App\Models\Setting::getValue('app_name','E-Office') }}
 
                 </h3>
 
                 <small>
 
-                    Administrasi Digital
+                    {{ \App\Models\Setting::getValue('app_subtitle','Administrasi Digital') }}
 
                 </small>
 
@@ -212,11 +197,7 @@
 
         <div class="sidebar-user">
 
-            <div class="avatar">
-
-                {{ strtoupper(substr(auth()->user()->name ?? 'A',0,1)) }}
-
-            </div>
+            <div class="avatar">@if(auth()->user()->profile_photo_path)<img src="{{ asset('storage/'.auth()->user()->profile_photo_path) }}" alt="Foto profil" class="employee-avatar-image">@else{{ strtoupper(substr(auth()->user()->name ?? 'A',0,1)) }}@endif</div>
 
             <div>
 
@@ -326,7 +307,7 @@
 
             </span>
 
-            <a href="{{ route('profile.edit') }}">
+            <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}">
 
                 <i class="bi bi-person-circle"></i>
 
@@ -457,11 +438,7 @@
                         data-bs-toggle="dropdown"
                         type="button">
 
-                        <div class="avatar">
-
-                            {{ strtoupper(substr(auth()->user()->name ?? 'A',0,1)) }}
-
-                        </div>
+                        <div class="avatar">@if(auth()->user()->profile_photo_path)<img src="{{ asset('storage/'.auth()->user()->profile_photo_path) }}" alt="Foto profil" class="employee-avatar-image">@else{{ strtoupper(substr(auth()->user()->name ?? 'A',0,1)) }}@endif</div>
 
                         <div class="text-start">
 
@@ -487,11 +464,7 @@
 
                         <li class="user-dropdown-header">
 
-                            <div class="user-dropdown-avatar">
-
-                                {{ strtoupper(substr(auth()->user()->name ?? 'A',0,1)) }}
-
-                            </div>
+                            <div class="user-dropdown-avatar">@if(auth()->user()->profile_photo_path)<img src="{{ asset('storage/'.auth()->user()->profile_photo_path) }}" alt="Foto profil" class="employee-avatar-image">@else{{ strtoupper(substr(auth()->user()->name ?? 'A',0,1)) }}@endif</div>
 
                             <h6>
 
@@ -752,8 +725,6 @@
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/scripts/choices.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {

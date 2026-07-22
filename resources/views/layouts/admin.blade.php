@@ -20,36 +20,6 @@
     </title>
 
     {{-- ========================================================= --}}
-    {{-- Bootstrap --}}
-    {{-- ========================================================= --}}
-
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
-
-    {{-- ========================================================= --}}
-    {{-- Bootstrap Icons --}}
-    {{-- ========================================================= --}}
-
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-        rel="stylesheet">
-
-    {{-- ========================================================= --}}
-    {{-- Google Font --}}
-    {{-- ========================================================= --}}
-
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
-
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-          rel="stylesheet">
-
-    {{-- ========================================================= --}}
     {{-- Laravel Assets --}}
     {{-- ========================================================= --}}
 
@@ -64,9 +34,6 @@
 
     <link rel="stylesheet"
           href="{{ asset('css/dashboard-admin.css') }}">
-
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/styles/choices.min.css">
 
     <style>
         .main-wrapper {
@@ -110,6 +77,21 @@
         .sidebar.collapsed .sidebar-menu { padding-inline: 10px; }
         .sidebar.collapsed .sidebar-menu a { padding: 12px; }
         .sidebar.collapsed .sidebar-menu .menu-badge { position: absolute; top: 4px; right: 4px; display: inline-flex; min-width: 18px; height: 18px; padding: 0 5px; font-size: 9px; }
+
+        .topbar { height: auto; min-height: var(--topbar-height); padding-top: 13px; padding-bottom: 13px; }
+        .topbar-left { min-width: 0; }
+        .page-title { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 7px; }
+        .page-title h4 { margin: 0; line-height: 1.18; }
+        .page-title .welcome-text { display: block; margin: 0; color: var(--gray-500); font-size: 13px; line-height: 1.4; white-space: nowrap; }
+        @media (max-width: 1200px) {
+            .page-title h4 { font-size: 21px; }
+            .topbar-date { display: none; }
+        }
+        @media (max-width: 768px) {
+            .topbar { padding-top: 14px; padding-bottom: 14px; }
+            .page-title { gap: 5px; }
+            .page-title .welcome-text { white-space: normal; }
+        }
 
         .choices { margin-bottom: 0; }
         .choices__inner {
@@ -565,7 +547,7 @@
 
                     </h4>
 
-                    <small>
+                    <div class="welcome-text">
 
                         Selamat datang kembali,
 
@@ -575,7 +557,7 @@
 
                         </strong>
 
-                    </small>
+                    </div>
 
                 </div>
 
@@ -913,9 +895,6 @@
     </div>
 
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/scripts/choices.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {

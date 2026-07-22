@@ -22,7 +22,7 @@
 
         <p class="text-muted mb-0">
 
-            Tambahkan data pegawai baru ke sistem E-Office ATR/BPN.
+            Tambahkan data pegawai baru beserta akun loginnya ke sistem.
 
         </p>
 
